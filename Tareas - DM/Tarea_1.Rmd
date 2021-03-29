@@ -138,14 +138,21 @@ head(columns)
 1. Liste todas las localidades donde *no* se discutió el concepto `igualdad`. 
 
 ```{r}
-
+data_tf[data_tf$igualdad==0,c("localidad") ]
 
 ```
 
 2. Liste las 10 localidades que más mencionaron el concepto `a_la_salud`. 
 
 ```{r}
-# RESPUESTA
+tabla <- data_tf[data_tf$a_la_salud>0,c("localidad","a_la_salud") ]
+
+
+tabla_ordenada <- tabla[order(tabla$a_la_salud, decreasing = TRUE),]
+
+tabla_ordenada[0:10,]
+
+
 ```
 
 
