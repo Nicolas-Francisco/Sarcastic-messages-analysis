@@ -1,0 +1,257 @@
+---
+title: "Tarea 1: Exploración y Visualización de Datos"
+author: "Felipe Bravo, Bárbara Poblete, Hernan Sarmiento, Aymé Arango, Alison Fernandez, Ignacio Meza, Cinthia Mabel Sanchez, Gabriel Ramos"
+date: "Marzo 2021"
+output:
+  html_document:
+    number_sections: yes
+    theme: spacelab
+    toc: yes
+  pdf_document:
+    toc: yes
+---
+
+# Declaración de compromiso ético
+Nosotros **Javier Lavados Jillbert y Nicolás García Ríos**, declaramos que realizamos de manera grupal los pasos de la presente actividad. También declaramos no incurrir en copia, ni compartir nuestras respuestas con otras personas ni con otros grupos. Por lo que, ratificamos que las respuestas son de nuestra propia confección y reflejan nuestro propio conocimiento.
+
+# Instrucciones
+
+1. Trabajen en equipos de dos personas. Salvo excepciones, no se corregirá entregas con menos de dos integrantes.
+
+2. Modifique este archivo `.Rmd` agregando sus respuestas donde corresponda.
+
+3. Para cada pregunta, cuando corresponda, **incluya el código fuente que utilizó para llegar a su respuesta**.
+
+4. El formato de entrega para esta actividad es un archivo html. **Genere un archivo HTML usando RStudio** y súbalo a U-Cursos.
+   Basta con que uno de los integrantes haga la entrega. Si ambos hacen una entrega en U-Cursos, se revisará cualquiera de éstas.
+
+# Tarea 
+La primera parte de esta actividad son preguntas teóricas que avanzaron en las clases del curso de Minería de datos.
+
+## Teoría
+
+*1. ¿Cuál es el objetivo de Minería de datos y qué la diferencia de Machine Learning? De un ejemplo para explicar la diferencia.*
+
+**Respuesta:**
+La minería de datos une ideas de distintas áreas de la computación con el fin de generar nuevo entendimiento. En cambio El aprendizaje de máquinas genera predicciones de comportamiento, patrones, etc.
+
+Ejemplo: 
+Tomemos el caso de Alexa, una asistente virtual. Imaginemos que un cliente le da instrucciones a Alexa por medio de la voz.
+El Machine Learning, en base a las señales del reconocimiento de voz, predice cuál es la instrucción a la que se refiere el cliente, ya sea poner una canción en youtube, o buscar una dirección en Google Maps.
+Por otro lado, La Minería de Datos entendería que el cliente suele escuchar algún género de música en específico debido a sus solicitudes, o que la mayoría de clientes son personas jóvenes que adultos mayores debido a la tecnología.
+
+*2. Describa y compare los siguientes métodos usados en Minería de datos: clasificación vs. clustering.*
+
+**Respuesta:**
+*Clasificación -* Este es un método predictivo el cuál se basa en tener un set de entrenamiento que entrena modelos, y que permitan predecir la clase de futuros datos desconocidos.
+
+*Clustering -* Este es un método descriptivo el cuál se basa en tener un conjunto de datos (puntos) con atributos, y que busca agrupar los datos más similares entre sí en llamados clusters.
+
+- Ambos son métodos usados en Minería de Datos.
+- El método de Clasificación es un método predictivo, mientras que el de Clustering es un método descriptivo.
+- 
+
+*3. ¿Qué desafios existen en Minería de datos?*
+
+**Respuesta:**
+- El cómo poder organizar datos no estructurados, dado que la gran mayoría de datos que existen se encuentran en este estado, lo que implica que requiere más preprocesamiento.
+
+
+*4. Respecto a los tipos de atributo, ¿cuál es la diferencia entre razón e intervalo? De un ejemplo.*
+
+**Respuesta:**
+La razón tiene un cero definido o absoluto, mientras que los datos intervalo no lo tienen. Por ejemplo, Kelvin y °C, ya que Kelvin su cero absoluto definido y los grados celcius no.
+
+
+*5. ¿Qué factores que ocasionan errores en el análisis de datos deben ser considerados para la limpieza de un set de datos?*
+
+**Respuesta:**
+La existencia de datos inexistentes, datos duplicados y datos inconsistentes.
+
+
+*6. ¿Qué es el análisis exploratorio de datos o EDA?*
+
+**Respuesta:**
+
+
+*7. Describa las medidas de tendencia central: media y mediana. Exponga la diferencia entre ambas.*
+
+**Respuesta:**
+
+
+*8. ¿Qué es una matriz de correlación y para qué sirve?*
+
+**Respuesta:**
+
+
+*9. Explique cómo se identifican los valores atípicos u outliers en un boxplot.*
+
+**Respuesta:**
+
+
+## Práctica 
+
+En esta parte de la actividad se trabajará con los datos del Proceso Constituyente 2016-2017 publicados en el Portal de Datos Abiertos del Gobierno de Chile, para mayor información pueden ingresar al siguiente link: https://datos.gob.cl/dataset/proceso-constituyente-abierto-a-la-ciudadania. Los datos corresponden a las actas de los Encuentros Locales Autoconvocados (ELAs), en cada cual, un grupo de personas se reune a discutir distintos conceptos como por ejemplo: salud, educación, seguridad, etc.
+
+Los datos con los que trabajarán consisten en la cantidad de veces que cada concepto constitucional fue mencionado por cada localidad de Chile. 
+
+Para cargar los datos, use:
+
+```{r}
+data_tf <- read.csv("http://dcc.uchile.cl/~hsarmien/mineria/datasets/actas.txt", header = T)
+```
+
+**Por cada pregunta adjunte el código R que utilizó para llegar a la respuesta. Respuestas sin código no recibirán puntaje**
+
+### Exploración básica
+
+1. ¿Cuáles son las dimensiones del dataset (filas, columnas)? Adjunte código o indique cómo determinó la cantidad de datos total. 
+
+```{r}
+dim(data_tf)
+```
+
+2. ¿Qué describe cada línea del dataset? (ejemplifique tomando la fila 12)
+
+```{r}
+data_tf[12,]
+```
+
+3. ¿Existen localidades repetidas en el dataset? Adjunte el código o indique cómo llegó a esa conclusión. 
+
+```{r}
+nrow(data_tf)   # Entrega la cantidad de localidades en la tabla original
+length(unique(data_tf$localidad))   # Entrega la cantidad de localidades en la tabla sin repeticiones de filas
+# Como ambos números son iguales, tenemos que no se repiten localidades
+```
+
+4. Liste los nombres de las columnas del dataset `data_tf`. Adjunte código en R y *recuerde* usar `head` si el resultado es muy largo.
+
+```{r}
+columns = names(data_tf)
+head(columns)
+```
+
+
+### Análisis
+
+1. Liste todas las localidades donde *no* se discutió el concepto `igualdad`. 
+
+```{r}
+
+
+```
+
+2. Liste las 10 localidades que más mencionaron el concepto `a_la_salud`. 
+
+```{r}
+# RESPUESTA
+```
+
+
+3. Liste los 15 conceptos menos mencionados a lo largo de todo el proceso.
+
+```{r}
+# RESPUESTA
+```
+
+
+4. Liste las 5 localidades que más participaron en el proceso. Describa cómo definió su medida de participación.
+
+
+```{r}
+# RESPUESTA
+```
+
+5. Ejecute el siguiente código que permitirá agregar una nueva columna a nuestro dataframe que solo tendrá el nombre de la región.
+
+```{r, message = F, warning=F}
+library(dplyr)
+regiones <- strsplit(as.character(data_tf[,1]), '/')
+data_tf$region <- sapply(regiones, "[[", 1)
+data_tf <- data_tf %>% select(localidad, region, everything())
+```
+
+Luego, genere un gráfico de barras (ggplot) que muestre los 10 conceptos más mencionados en cada una de las regiones mencionadas (adjunte gráficos y código):
+
+- `Valparaiso`
+- `Metropolitana de Santiago`
+- `Biobio`
+
+
+Cabe resaltar, que se esperan tres gráficos de barras para las tres diferentes regiones:
+
+```{r}
+# 10 conceptos más mencionados en Valparaiso
+```
+
+```{r}
+# 10 conceptos más mencionados en Metropolitana de Santiago
+```
+
+
+```{r}
+# 10 conceptos más mencionados en Biobio
+```
+
+6. De la pregunta anterior, ¿considera que es razonable usar el conteo de frecuencias para determinar las regiones que tuvieron mayor participación en el proceso? ¿Por qué? Sugiera y solamente comente una forma distinta de hacerlo.
+
+**Respuesta:**
+
+## Ejercicios
+
+### Accidentes de tránsito
+
+Para esta sección utilizaremos un dataset real de número de accidentes de tránsito por localidad, el cual puede ser encontrado en el siguiente link: http://datos.gob.cl/dataset/9348. Para cargar el dataset ejecute el siguiente código:
+
+```{r}
+tipos <- read.table("https://users.dcc.uchile.cl/~hsarmien/mineria/datasets/accidentes_2010_2011.txt")
+head(tipos)
+```
+
+Explore el set de datos para responder las siguientes preguntas:
+
+1. Filtre los datos para incluir sólo los accidentes ocurridos el año 2010 a nivel regional. Genere un boxplot donde se indique la cantidad de accidentes categorizado por tipo de accidente.
+
+Este tipo de gráfico nos ayudará a entender como se distribuye los datos por cada tipo de accidentes. Es decir, podremos apreciar que tan dispersos o similares son los datos en todo el dataset. También, puede ser útil para observar valores atípicos u outliers en los datos.
+
+```{r}
+# RESPUESTA
+```
+
+2. ¿Qué otra forma de explorar los datos podría agregar para el dataset de Accidentes de tránsito y qué información adicional aporta? Adjunte una breve explicación.
+
+```{r}
+# RESPUESTA
+```
+
+**Respuesta:**
+
+### Diamantes
+
+Considere el set de datos diamonds del paquete ggplot2 de R, que contiene los precios en dolares, junto con otros atributos importantes: quilates, corte, color y claridad. También hay medidas físicas como ser: x (largo), y (ancho), z (profundidad), depth (porcentaje total de profundidad) y table (ancho desde el tope del diamante al punto relativo más ancho del diamante):
+
+```{r}
+library(ggplot2)
+data("diamonds")
+head(diamonds)
+```
+
+Realice una exploración por el set de datos para responder las siguientes preguntas:
+
+1. Teniendo en cuenta las medidas físicas, ¿considera que existen valores inexistentes o inconsistentes? Describa como manejaría esta situación. Adjunte el código necesario.
+
+```{r}
+# RESPUESTA
+```
+
+2. Considerando la relación entre dos atributos, ¿cuál es la correlación más alta para table? y ¿qué atributos están más correlacionadas con precio (price) y qué significa esto? Adjunte el código necesario para la respuesta.
+
+```{r}
+# RESPUESTA
+```
+
+
+3. Proponga otra forma para explorar los datos. ¿Qué información adicional aporta? Adjunte una breve explicación.
+
+**Respuesta:**
