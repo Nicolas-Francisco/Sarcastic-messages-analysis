@@ -159,7 +159,18 @@ tabla_ordenada[0:10,]
 3. Liste los 15 conceptos menos mencionados a lo largo de todo el proceso.
 
 ```{r}
-# RESPUESTA
+
+tabla_sin_lugar <- data_tf[,2:113]
+
+tabla=colSums(data_tf[,2:113])
+
+tabla2=sort(tabla)
+
+comunas=head(tabla2,15)
+
+names(comunas)
+
+
 ```
 
 
@@ -167,7 +178,13 @@ tabla_ordenada[0:10,]
 
 
 ```{r}
-# RESPUESTA
+filas=rowSums(data_tf[,2:113])
+
+
+tabla=data.frame(data_tf$localidad,filas)
+
+tabla_ordenada <- tabla[order(tabla$filas, decreasing = TRUE),]
+tabla_ordenada[0:10,]
 ```
 
 5. Ejecute el siguiente código que permitirá agregar una nueva columna a nuestro dataframe que solo tendrá el nombre de la región.
