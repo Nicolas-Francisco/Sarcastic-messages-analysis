@@ -195,21 +195,66 @@ Luego, genere un gráfico de barras (ggplot) que muestre los 10 conceptos más m
 Cabe resaltar, que se esperan tres gráficos de barras para las tres diferentes regiones:
 
 ```{r}
+library(ggplot2)  # cargamos la librería
+
 # 10 conceptos más mencionados en Valparaiso
+tabla_valparaiso <- data_tf[data_tf$region == 'Valparaiso',]
+tabla_valparaiso_sumas = colSums(tabla_valparaiso[,3:114])
+tabla_valparaiso_plot = sort(tabla_valparaiso_sumas)
+# Ya tenemos un vector que tiene las sumas de todas las columnas
+
+size = length(tabla_valparaiso_plot)
+vector_valparaiso = tabla_valparaiso_plot[(size-9):size]
+valparaiso <- data.frame(names = names(vector_valparaiso), values = as.numeric(vector_valparaiso))
+
+ggplot(valparaiso) + 
+  geom_bar(aes(x = names, y = values), stat="identity") +
+  coord_flip() +
+  ggtitle("10 conceptos más mencionados en Valparaiso") + # título
+  xlab("Concepto") + ylab("Frecuencia")  # etiquetas
 ```
 
 ```{r}
 # 10 conceptos más mencionados en Metropolitana de Santiago
+tabla_Santiago <- data_tf[data_tf$region == 'Metropolitana de Santiago',]
+tabla_Santiago_sumas = colSums(tabla_Santiago[,3:114])
+tabla_Santiago_plot = sort(tabla_Santiago_sumas)
+# Ya tenemos un vector que tiene las sumas de todas las columnas
+
+size = length(tabla_Santiago_plot)
+vector_Santiago = tabla_Santiago_plot[(size-9):size]
+Santiago <- data.frame(names = names(vector_Santiago), values = as.numeric(vector_Santiago))
+
+ggplot(Santiago) + 
+  geom_bar(aes(x = names, y = values), stat="identity") +
+  coord_flip() +
+  ggtitle("10 conceptos más mencionados en Santiago") + # título
+  xlab("Concepto") + ylab("Frecuencia")  # etiquetas
 ```
 
 
 ```{r}
 # 10 conceptos más mencionados en Biobio
+tabla_Biobio <- data_tf[data_tf$region == 'Biobio',]
+tabla_Biobio_sumas = colSums(tabla_Biobio[,3:114])
+tabla_Biobio_plot = sort(tabla_Biobio_sumas)
+# Ya tenemos un vector que tiene las sumas de todas las columnas
+
+size = length(tabla_Biobio_plot)
+vector_Biobio = tabla_Biobio_plot[(size-9):size]
+Biobio <- data.frame(names = names(vector_Biobio), values = as.numeric(vector_Biobio))
+
+ggplot(Biobio) + 
+  geom_bar(aes(x = names, y = values), stat="identity") +
+  coord_flip() +
+  ggtitle("10 conceptos más mencionados en Biobio") + # título
+  xlab("Concepto") + ylab("Frecuencia")  # etiquetas
 ```
 
 6. De la pregunta anterior, ¿considera que es razonable usar el conteo de frecuencias para determinar las regiones que tuvieron mayor participación en el proceso? ¿Por qué? Sugiera y solamente comente una forma distinta de hacerlo.
 
 **Respuesta:**
+No, dado que las regiones de Valparaíso, Biobio y Santiago son las más pobladas en todo el país, por lo que matemáticamente es más probable que tengan mayor participación que el resto de las regiones (Al haber más población, hay más menciones de distintos temas, llevando directamente a mayor participación aparente). Otra forma más razonable de medir la participación sería proporcionalmente, esto es, crear una razón de participación a partir del conteo de frecuencias y la población en las localidades, de esta forma tendremos menciones por cantidad de habitantes.
 
 ## Ejercicios
 
