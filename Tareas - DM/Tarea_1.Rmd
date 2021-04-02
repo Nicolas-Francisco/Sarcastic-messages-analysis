@@ -43,18 +43,19 @@ Por otro lado, La Minería de Datos entendería que el cliente suele escuchar al
 *2. Describa y compare los siguientes métodos usados en Minería de datos: clasificación vs. clustering.*
 
 **Respuesta:**
-*Clasificación -* Este es un método predictivo el cuál se basa en tener un set de entrenamiento que entrena modelos, y que permitan predecir la clase de futuros datos desconocidos.
+**Clasificación -** Este es un método predictivo el cuál se basa en tener un set de entrenamiento que entrena modelos, y que permitan predecir la clase de futuros datos desconocidos.
 
-*Clustering -* Este es un método descriptivo el cuál se basa en tener un conjunto de datos (puntos) con atributos, y que busca agrupar los datos más similares entre sí en llamados clusters.
+**Clustering -** Este es un método descriptivo el cuál se basa en tener un conjunto de datos (puntos) con atributos, y que busca agrupar los datos más similares entre sí en llamados clusters.
 
 - Ambos son métodos usados en Minería de Datos.
 - El método de Clasificación es un método predictivo, mientras que el de Clustering es un método descriptivo.
-- 
+- El método de Clasificación permite predecir una clase en base a los atributos de un elemento. Por otro lado, el método de Clustering agrupa tipos datos en grupos en base a sus atributos.
 
 *3. ¿Qué desafios existen en Minería de datos?*
 
 **Respuesta:**
 - El cómo poder organizar datos no estructurados, dado que la gran mayoría de datos que existen se encuentran en este estado, lo que implica que requiere más preprocesamiento.
+- 
 
 
 *4. Respecto a los tipos de atributo, ¿cuál es la diferencia entre razón e intervalo? De un ejemplo.*
@@ -66,7 +67,7 @@ La razón tiene un cero definido o absoluto, mientras que los datos intervalo no
 *5. ¿Qué factores que ocasionan errores en el análisis de datos deben ser considerados para la limpieza de un set de datos?*
 
 **Respuesta:**
-La existencia de datos inexistentes, datos duplicados y datos inconsistentes.
+La existencia de ruido, datos inexistentes, datos duplicados y datos inconsistentes.
 
 
 *6. ¿Qué es el análisis exploratorio de datos o EDA?*
@@ -146,12 +147,8 @@ data_tf[data_tf$igualdad==0,c("localidad") ]
 
 ```{r}
 tabla <- data_tf[data_tf$a_la_salud>0,c("localidad","a_la_salud") ]
-
-
 tabla_ordenada <- tabla[order(tabla$a_la_salud, decreasing = TRUE),]
-
 tabla_ordenada[0:10,]
-
 
 ```
 
@@ -161,30 +158,22 @@ tabla_ordenada[0:10,]
 ```{r}
 
 tabla_sin_lugar <- data_tf[,2:113]
-
-tabla=colSums(data_tf[,2:113])
-
-tabla2=sort(tabla)
-
-comunas=head(tabla2,15)
-
+tabla = colSums(data_tf[,2:113])
+tabla2 = sort(tabla)
+comunas = head(tabla2,15)
 names(comunas)
-
 
 ```
 
 
 4. Liste las 5 localidades que más participaron en el proceso. Describa cómo definió su medida de participación.
 
-
+Debido a que cada fila indica la cantidad de veces que se discutió cada concepto (correspondiente a las columnas), entonces mientras mayor sea la suma total de la cantidad de veces que se discutieron todos los conceptos, mayor fué la discusión en la localidad en su totalidad, indicando mayor participación. Así, podemos listar las localidades que más participaron en el proceso como sigue:
 ```{r}
 filas=rowSums(data_tf[,2:113])
-
-
 tabla=data.frame(data_tf$localidad,filas)
-
 tabla_ordenada <- tabla[order(tabla$filas, decreasing = TRUE),]
-tabla_ordenada[0:10,]
+tabla_ordenada[0:5,]
 ```
 
 5. Ejecute el siguiente código que permitirá agregar una nueva columna a nuestro dataframe que solo tendrá el nombre de la región.
