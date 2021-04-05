@@ -280,7 +280,14 @@ Explore el set de datos para responder las siguientes preguntas:
 Este tipo de gráfico nos ayudará a entender como se distribuye los datos por cada tipo de accidentes. Es decir, podremos apreciar que tan dispersos o similares son los datos en todo el dataset. También, puede ser útil para observar valores atípicos u outliers en los datos.
 
 ```{r}
-# RESPUESTA
+accidentes_regionales_2010 <- with(tipos, tipos[Muestra == "Regional" & Anio == 2010, ])
+
+ggplot(accidentes_regionales_2010, aes(x = TipoAccidente, y = Cantidad)) +
+  geom_boxplot() +
+  # scale_y_continuous(limits = c(0, 3500)) +   # Línea de código para hacer zoom sobre la muestra. Elimina datos
+  coord_flip() +  # transformamos el grafico invirtiendo los ejes de coordenadas (sólo visualmente)
+  ggtitle("Cantidad de accidentes a nivel regional por tipo de accidente, año 2010") + # título
+  xlab("Tipo de Accidente") + ylab("Cantidad")  # etiquetas +
 ```
 
 2. ¿Qué otra forma de explorar los datos podría agregar para el dataset de Accidentes de tránsito y qué información adicional aporta? Adjunte una breve explicación.
