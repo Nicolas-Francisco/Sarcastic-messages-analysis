@@ -169,6 +169,7 @@ tabla2 = sort(tabla)
 comunas = head(tabla2,15)
 names(comunas)
 
+
 ```
 
 
@@ -293,8 +294,22 @@ ggplot(accidentes_regionales_2010, aes(x = TipoAccidente, y = Cantidad)) +
 2. ¿Qué otra forma de explorar los datos podría agregar para el dataset de Accidentes de tránsito y qué información adicional aporta? Adjunte una breve explicación.
 
 ```{r}
-# RESPUESTA
+accidentes_nacionales <- with(tipos, tipos[Muestra == "Nacional", ])
+
+porTipo<- tipos %>%  
+group_by(TipoAccidente) %>%                       
+summarise(total = sum(Cantidad)) %>%              
+arrange(-total)    
+
+
+porTipo
+
+
+pie(porTipo$total, labels=porTipo$TipoAccidente,main="Tipos de accidente en total" )
+
+
 ```
+
 
 **Respuesta:**
 
@@ -313,13 +328,28 @@ Realice una exploración por el set de datos para responder las siguientes pregu
 1. Teniendo en cuenta las medidas físicas, ¿considera que existen valores inexistentes o inconsistentes? Describa como manejaría esta situación. Adjunte el código necesario.
 
 ```{r}
-# RESPUESTA
+sum(is.na(diamonds$depth))
+sum(is.na(diamonds$table))
+sum(is.na(diamonds$x))
+sum(is.na(diamonds$y))
+sum(is.na(diamonds$z))
+
+
+
+summary(diamonds)
+
+boxplot(x=diamonds[,c("depth","table","x","y","z")], main="Medidas fisicas")
 ```
 
 2. Considerando la relación entre dos atributos, ¿cuál es la correlación más alta para table? y ¿qué atributos están más correlacionadas con precio (price) y qué significa esto? Adjunte el código necesario para la respuesta.
 
 ```{r}
-# RESPUESTA
+cor(diamonds[,c("carat","price","depth","table","x","y","z")])
+
+
+
+
+
 ```
 
 
