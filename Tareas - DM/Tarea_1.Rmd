@@ -301,17 +301,11 @@ group_by(TipoAccidente) %>%
 summarise(total = sum(Cantidad)) %>%              
 arrange(-total)    
 
-
-porTipo
-
-
 pie(porTipo$total, labels=porTipo$TipoAccidente,main="Tipos de accidente en total" )
 
-
 ```
-
-
-**Respuesta:**
+**Respuesta:** 
+Otra forma de explorar los datos es filtrar todos los objetos en tipo Nacional y ver la proporción de los tipos de accidentes. Esta visualización nos da más información respecto a los accidentes a nivel nacional, ya que se observa que los accidentes de tipo colisión son los más numerosos a nivel país, seguido de Choque y Atropello.
 
 ### Diamantes
 
@@ -334,25 +328,23 @@ sum(is.na(diamonds$x))
 sum(is.na(diamonds$y))
 sum(is.na(diamonds$z))
 
-
-
 summary(diamonds)
 
 boxplot(x=diamonds[,c("depth","table","x","y","z")], main="Medidas fisicas")
 ```
+**Respuesta:**
+Respecto a los datos inexistentes poemos contar la cantidad de elementos de tipo NA o Nulo. En este caso, en cada atributo esta suma es 0, indicando que no hay valores Inexistentes. Por otro lado, para detectar datos inconsistentes basta graficar las medidas físicas del dataset usando boxplot y notar los outliers que se generan en cada atributo. Podemos observar que hay una gran cantidad de datos atípicos en Profundidad y Table.
 
 2. Considerando la relación entre dos atributos, ¿cuál es la correlación más alta para table? y ¿qué atributos están más correlacionadas con precio (price) y qué significa esto? Adjunte el código necesario para la respuesta.
 
 ```{r}
 cor(diamonds[,c("carat","price","depth","table","x","y","z")])
 
-
-
-
-
 ```
-
+**Respuesta:**
+Para table la correlación más alta es la medida x, mientras que los atributos más correlacionados con el precio son en primer lugar el peso (carat), y no tan intensamente las medidas x, y e z. Lo último nos indica que el peso del diamante es casi directamente proporcional con su precio, lo cuál tiene sentido al significar que mientras más cantidad de este mineral precioso, más raro y más caro.
 
 3. Proponga otra forma para explorar los datos. ¿Qué información adicional aporta? Adjunte una breve explicación.
 
 **Respuesta:**
+Otra forma para explorar los datos sería convertir el atributo corte en alguna medida numérica. Dado que el atributo actualmente es de tipo orden y string, y no es posible ver alguna relación entre le precio y tamaño con el tipo de corte (bueno, muy bueno, premium, etc.) que intuitivamente podrían estar corelacionados.
