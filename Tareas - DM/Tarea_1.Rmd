@@ -73,21 +73,27 @@ La existencia de ruido, datos inexistentes, datos duplicados y datos inconsisten
 *6. ¿Qué es el análisis exploratorio de datos o EDA?*
 
 **Respuesta:**
+Es una forma de análisis de datos, que engloba un conjunto de técnicas para poder comprender de manera rápida la naturaleza de una colección de datos o dataset. Este se basa principalemnte en dos criterios, las estadíasticas de resumen y la visualización de datos.
 
 
 *7. Describa las medidas de tendencia central: media y mediana. Exponga la diferencia entre ambas.*
 
 **Respuesta:**
+Las medidas de tendencia central son medidas que tratan de resumir los valores observados en un único valor asociado al centro de la muestra:
+- la media o promedio es el valor que en promedio generan los datos. Debido a que depende aritméticamente de los valores de los datos, es muy sensible a outliers.
+- Por otro lado, la mediana es el valor central de la muestra respecto a la cantidad de elementos del dataset. Debido a que depende de la cantidad de elementos y no de los valores de estos, esta medida es más robusta a outliers.
 
 
 *8. ¿Qué es una matriz de correlación y para qué sirve?*
 
 **Respuesta:**
+Una matriz de correlación es una tabla que grafica las dimensiones de un dataset en ambos ejes con sus coeficientes de correlación respectivos, donde el coeficiente de correlación indica la dependencia lineal entre los valores de dos variables (en este caso, dos dimensines de un dataset). Esta matriz sirve para visualizar las dependencias lineales de los valores de distintas dimensiones sin tener que graficarlas una a una.
 
 
 *9. Explique cómo se identifican los valores atípicos u outliers en un boxplot.*
 
 **Respuesta:**
+Los boxplots son diagramas de caja que se construyen a partir de los cuartiles de la muestra, donde la caja central representa el 50% de los datos, mientras que la caja más extrema representan los valores más extremos respecto a la distancia que hay entre el primer y tercer cuartil. Dado que la caja más externa ya representan los valores más extremos de la muestra (el 25% inferior y el 25% superior aproximadamente), todos los valores que salgan de la caja externa serán identificados como valores atípicos o los llamados outliers.
 
 
 ## Práctica 
@@ -210,7 +216,7 @@ valparaiso <- data.frame(names = names(vector_valparaiso), values = as.numeric(v
 ggplot(valparaiso) + 
   geom_bar(aes(x = names, y = values), stat="identity") +
   coord_flip() +
-  ggtitle("10 conceptos más mencionados en Valparaiso") + # título
+  ggtitle("10 conceptos más \n mencionados en \n Valparaiso") + # título
   xlab("Concepto") + ylab("Frecuencia")  # etiquetas
 ```
 
@@ -228,7 +234,7 @@ Santiago <- data.frame(names = names(vector_Santiago), values = as.numeric(vecto
 ggplot(Santiago) + 
   geom_bar(aes(x = names, y = values), stat="identity") +
   coord_flip() +
-  ggtitle("10 conceptos más mencionados en Santiago") + # título
+  ggtitle("10 conceptos más \n mencionados en \n Santiago") + # título
   xlab("Concepto") + ylab("Frecuencia")  # etiquetas
 ```
 
@@ -247,7 +253,7 @@ Biobio <- data.frame(names = names(vector_Biobio), values = as.numeric(vector_Bi
 ggplot(Biobio) + 
   geom_bar(aes(x = names, y = values), stat="identity") +
   coord_flip() +
-  ggtitle("10 conceptos más mencionados en Biobio") + # título
+  ggtitle("10 conceptos más \n mencionados en \n BioBio") + # título
   xlab("Concepto") + ylab("Frecuencia")  # etiquetas
 ```
 
