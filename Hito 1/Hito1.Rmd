@@ -276,5 +276,5 @@ word_freq.sw <- word_freq.sw[order(-word_freq.sw$freq),]
 ggplot(word_freq.sw[1:20,], aes(x = reorder(word, freq), y = freq)) +
           geom_bar(stat = "identity") + 
           coord_flip()+
-          ggtitle(label = "Top-20 palabras presentes en comentarios sarcasticos sin considerar stopwords")
+          ggtitle(label = "Top-20 palabras presentes en comentarios padre sin considerar stopwords")
 ```
