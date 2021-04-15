@@ -1,9 +1,9 @@
 ---
+html_document: null
+subtitle: 'Integrantes: Nicolás García - Javier Lavados - José Triviño - Pablo Gutierrez
+  - Sebastián Salinas'
 title: "Análisis de mensajes Sarcásticos"
-subtitle: "Exploración de datos Hito 1"
-subsubtitle: "Integrantes: Nicolás García - Javier Lavados - José Triviño - Pablo Gutierrez - Sebastián Salinas"
-  html_document:
-    df_print: paged
+df_print: paged
 ---
 
 # Introducción
