@@ -278,3 +278,99 @@ ggplot(word_freq.sw[1:20,], aes(x = reorder(word, freq), y = freq)) +
           coord_flip()+
           ggtitle(label = "Top-20 palabras presentes en comentarios padre sin considerar stopwords")
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Subreddit más mencionado
+
+
+
+
+```{r}
+docs <- VectorSource(sarcasmo[,c("subreddit")])
+docs <- VCorpus(docs)
+```
+
+Al ejecutar la siguiente instrucción, veremos resumidamente cómo está compuesto el Corpus o colección de documentos
+
+```{r, eval=F}
+inspect(docs)
+```
+
+
+
+## Matriz Documento-término
+
+Dado que necesitamos representar los datos de alguna manera, una forma tradicional de hacerlo es mediante una matriz. La idea principal es considerar cada documento como una fila, la cual a su vez tiene tantas columnas como términos existan en el corpus completo de documento (no por documento). De esta forma, podríamos conocer cuáles términos se repiten entre documentos (por ejemplo).
+
+Para esto, usaremos la función ``DocumentTermMatrix``, que utilizará nuestra colección completa de documentos.
+
+
+```{r}
+dtm <- DocumentTermMatrix(docs)
+inspect(dtm)
+```
+### Transformar la DocumentTermMatrix en una matriz "visualizable"
+
+Dado que la función ``DocumentTermMatrix`` agrega más información aparte de solo la matriz (metadata), muchas veces nos gustaría visualizar la matriz de forma más sencilla. Para ello, transformaremos el contenido a una matriz.
+
+
+```{r}
+dtm.matrix <- as.matrix(dtm) 
+```
+
+### Términos más frecuentes presentes en los comentarios sacasticos
+
+Creamos un dataframe donde tendremos 2 columnas: una para el término y otra para la cantidad de veces que aparece en la colección completa.
+
+```{r}
+freq <- colSums(dtm.matrix)
+word_freq <- data.frame(word = names(freq), freq = freq, row.names = NULL)
+word_freq <- word_freq[order(-word_freq$freq),]
+```
+
+### Graficar términos más frecuentes presentes en los comentarios sacasticos
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+ggplot(word_freq[1:20,], aes(x = reorder(word, freq), y = freq)) +
+          geom_bar(stat = "identity") + 
+          coord_flip()+
+          ggtitle(label = "Top-20 subreddits presentes en el dataset")
+```
+
+
+
+
+
+# Comparación entre largos de los comentarios
+
+## Importación del dataset descargado localmente
+```{r, message=F}
+library(readxl)
+dataset <- read_excel("../../train-balanced-sarcasm2.xlsx")
+View(dataset)
+```
+
+```{r}
+hist(dataset$Length_comment, breaks = 100)
+```
