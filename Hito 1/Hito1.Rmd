@@ -372,5 +372,10 @@ View(dataset)
 ```
 
 ```{r}
-hist(dataset$Length_comment, breaks = 100)
+hist(dataset$Length_comment,xlim=c(0,1000), breaks = 1000)
+```
+
+```{r, message=F}
+hist(dataset$Lenght_parent,xlim=c(0,1000), breaks = 1000)
+
 ```
