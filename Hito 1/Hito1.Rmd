@@ -379,3 +379,73 @@ hist(dataset$Length_comment,xlim=c(0,1000), breaks = 1000)
 hist(dataset$Lenght_parent,xlim=c(0,1000), breaks = 1000)
 
 ```
+
+
+
+
+
+
+
+# Modo nuevo pa discutir con sali
+
+```{r}
+Length_comment=str_length(sarcasmo$comment)
+hist(Length_comment,xlim=c(0,1000), breaks = 1000)
+
+```
+
+
+
+```{r}
+Lenght_parent=str_length(sarcasmo$parent_comment)
+hist(Lenght_parent,xlim=c(0,1000), breaks = 1000)
+
+```
+
+
+
+
+
+```{r}
+
+anhos=substr(sarcasmo$date,1,4)
+anhos=table(anhos)
+anhos=data.frame(anhos)
+
+```
+
+
+```{r}
+barplot(anhos$Freq, names.arg = anhos$anhos, main="Comentarios a través del tiempo")
+
+```
+
+
+
+```{r}
+
+porTopico<- sarcasmo %>%  
+group_by(subreddit) %>%                       
+summarise(total = sum(score)) %>%              
+arrange(-total) 
+
+porTopico=porTopico[0:20,]
+porTopico
+```
+
+```{r}
+
+
+barplot(porTopico$total, names.arg = porTopico$subreddit , main="Comentarios a través del tiempo")
+
+```
+```{r}
+
+ggplot(data = porTopico, aes(x = reorder(subreddit, total), y=total)) + geom_bar(stat = "identity")+coord_flip()+
+          ggtitle(label = "Top-20 subreddits mas scoreados")
+```
+
+
+
+
+
