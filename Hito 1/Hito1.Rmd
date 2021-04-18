@@ -1,0 +1,435 @@
+---
+title: "Exploración de datos Hito 1"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+## Importación del dataset descargado localmente
+```{r, message=F}
+library(tidyverse)
+sarcasmo <- read_csv("../../train-balanced-sarcasm.csv")
+```
+
+Lo primero es hacer una revisión inicial del dataset para comprender cómo están estructurados los datos. Esto significa, entender cuantos datos son, cuantas columnas, qué describe cada columna, el tipo de datos de las columnas, entre otras cosas.
+
+## Atributos del dataset
+
+Con la función ```head``` podemos hacernos una idea de cómo son los datos, nos muestra los primeros 5 o 6 datos del dataset con los encabezados de cada atributo. Esto es útil para ver si los datos quedaron bien cargados o no.
+```{r}
+head(sarcasmo)
+```
+
+Dimensiones del dataset
+
+```{r}
+dim(sarcasmo)
+```
+
+Es importane chequear si es que existen valores nulos dentro del dataset antes de realizar la exploración sobre este.
+Para revisar la presencia de valores inexistentes en el dataset se utilizará la función is.na(), que retorna un valor de verdad dependiendo si el dato es NA o no. Realizaremos la operación suma sobre estos valores booleanos, si la suma resultante es 0 quiere decir que no se encontraron valores en el dataset en que is.na() retornará TRUE, lo que nos indicaría que no hay datos inexistentes en las columnas.
+
+```{r}
+# Suma de valores NA en todas las columnas del dataset
+sum(is.na(sarcasmo$comment))
+sum(is.na(sarcasmo$author))
+sum(is.na(sarcasmo$subreddit))
+sum(is.na(sarcasmo$score))
+sum(is.na(sarcasmo$ups))
+sum(is.na(sarcasmo$downs))
+sum(is.na(sarcasmo$date))
+sum(is.na(sarcasmo$created_utc))
+sum(is.na(sarcasmo$parent_comment))
+# Mostrar existencia de filas con valores NA (notar que no son los que tiene como mentario el string '0')
+sarcasmo[sarcasmo$comment == 0,]
+```
+
+Como se puede observar se encontró que existian valores vacíos para la columna de los comentarios sarcasticos. Sin embargo, estos valores estaban presentes en todas las instancias asociadas a los valores NA. Por lo cual, con el objetivo de purificar el dataset, se realizó una limpieza sobre este, eliminando las filas corruptas.
+
+```{r}
+sarcasmo=sarcasmo[is.na(sarcasmo$author)==FALSE,]
+head(sarcasmo)
+```
+
+La función ```summary``` aplica estadísticas a cada columna. En particular, indica el promedio, mediana, quantiles, calor máximo, mínimo, entre otros. 
+
+```{r}
+summary(sarcasmo)
+```
+
+
+## Analisís de datos sobre los comentarios sarcasticos
+
+Un buen punto de partida sería averiguar cuales son las palabras más recurrentes en los comentarios sarcasticos presentes en este dataset. Para ello, haremos una limpieza sobre estos.
+
+Si bien entendemos que los tipos de puntuación utilizados, la diferenciación entre mayúsculas y minúsculas, entre otros elementos que se usan para enriquecer los mensajes escritos son clave a la hora de transmitir el sarcasmo, de momento solo nos interesa la frecuencia de las palabras en si y no otras caracteristicas como por ejemplo el como están escritas.
+
+
+Dicho esto, la forma más tradicional de representar texto es considerar cada caracter de cada comentario y agregarlo como una columna al dataset. Ya que como se dijo la idea principal es considerar, por ejemplo, si aparece o no una palabra en cierto comentario o cuántas veces aparece en él. Por lo tanto, podríamos tener tantas columnas como elementos tengamos en la colección completa.
+
+Para lograr esto, utilizaremos la librería ``tm`` la cual permite realizar _text mining_ en R.
+
+```{r, message=F}
+library(tm)
+```
+
+Convertiremos nuestro vector de comentarios sarcasticos a uno que pueda ser leído por ``tm``, donde habrán tantos documentos como comentarios. Luego, crearemos un Corpus o colección de documentos.
+
+```{r}
+docs <- VectorSource(sarcasmo[,c("comment")])
+docs <- VCorpus(docs)
+```
+
+Al ejecutar la siguiente instrucción, veremos resumidamente cómo está compuesto el Corpus o colección de documentos
+
+```{r, eval=F}
+inspect(docs)
+```
+
+
+
+## Pre-procesamiento de texto
+En un comienzo, el contenido de cada documento en nuestra colección contendrá mucha información que de momento no es relevante para nosotros. Por ejemplo, puntuaciones, números, palabras no relevantes, etc. Por ello, es necesario efectuar el pre-procesamiento y limpieza de los datos.
+
+### Remover puntuación
+```{r}
+docs <- tm_map(docs, removePunctuation)
+```
+
+### Remover números
+```{r}
+docs <- tm_map(docs, removeNumbers)
+```
+
+### Convertir a minúscula
+```{r}
+docs <- tm_map(docs, content_transformer(tolower))
+```
+
+### Eliminar espacios en blanco innecesarios
+```{r}
+docs <- tm_map(docs, stripWhitespace)
+```
+
+### Reemplazar caracteres específicos
+```{r}
+docs <- tm_map(docs, content_transformer(gsub), pattern = "/", replacement = "")
+docs <- tm_map(docs, content_transformer(gsub), pattern = '[[:digit:]]+', replacement = "")  # elimina cualquier digito
+```
+
+### Eliminar tildes (A pesar que los comentarios están en ingles, nunca está de más prevenir)
+```{r}
+docs <- tm_map(docs, content_transformer(iconv), from="UTF-8",to="ASCII//TRANSLIT")
+```
+
+### Remover caracteres especiales no considerados por ```removePunctuation```
+```{r}
+removeSpecialChars <- function(x) gsub("[^a-zA-Z0-9 ]","",x)
+docs <- tm_map(docs, content_transformer(removeSpecialChars))
+```
+
+
+
+
+## Matriz Documento-término
+
+Dado que necesitamos representar los datos de alguna manera, una forma tradicional de hacerlo es mediante una matriz. La idea principal es considerar cada documento como una fila, la cual a su vez tiene tantas columnas como términos existan en el corpus completo de documento (no por documento). De esta forma, podríamos conocer cuáles términos se repiten entre documentos (por ejemplo).
+
+Para esto, usaremos la función ``DocumentTermMatrix``, que utilizará nuestra colección completa de documentos.
+
+
+```{r}
+dtm <- DocumentTermMatrix(docs)
+inspect(dtm)
+```
+### Transformar la DocumentTermMatrix en una matriz "visualizable"
+
+Dado que la función ``DocumentTermMatrix`` agrega más información aparte de solo la matriz (metadata), muchas veces nos gustaría visualizar la matriz de forma más sencilla. Para ello, transformaremos el contenido a una matriz.
+
+
+```{r}
+dtm.matrix <- as.matrix(dtm) 
+```
+
+### Términos más frecuentes presentes en los comentarios sacasticos
+
+Creamos un dataframe donde tendremos 2 columnas: una para el término y otra para la cantidad de veces que aparece en la colección completa.
+
+```{r}
+freq <- colSums(dtm.matrix)
+word_freq <- data.frame(word = names(freq), freq = freq, row.names = NULL)
+word_freq <- word_freq[order(-word_freq$freq),]
+```
+
+### Graficar términos más frecuentes presentes en los comentarios sacasticos
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+ggplot(word_freq[1:20,], aes(x = reorder(word, freq), y = freq)) +
+          geom_bar(stat = "identity") + 
+          coord_flip()+
+          ggtitle(label = "Top-20 palabras presentes en comentarios sarcasticos")
+```
+
+
+
+Como es posible apreciar, la mayor de estas palabras son aquellas que no entregan mayor significado a los documentos. Por ejemplo, artículos o preposiciones en su mayoría. Para solucionar este problema, podemos considerar una bolsa de palabras comunes llamada ``stopwords``. Por lo tanto y sobre el corpus original de documentos, eliminaremos palabras comunes para luego calcular la matriz nuevamente.
+
+### Removeremos las stopwords:
+```{r}
+docs <- tm_map(docs, removeWords, stopwords("english"))
+```
+
+```{r}
+dtm.sw <- DocumentTermMatrix(docs)
+dtm.sw.matrix <- as.matrix(dtm.sw)
+freq.sw <- colSums(dtm.sw.matrix)
+word_freq.sw <- data.frame(word = names(freq.sw), freq = freq.sw, row.names = NULL)
+word_freq.sw <- word_freq.sw[order(-word_freq.sw$freq),]
+```
+
+### Volver a graficar términos más frecuentes presentes en los comentarios sarcasticos, esta vez sin considerar stopwords
+
+```{r}
+ggplot(word_freq.sw[1:20,], aes(x = reorder(word, freq), y = freq)) +
+          geom_bar(stat = "identity") + 
+          coord_flip()+
+          ggtitle(label = "Top-20 palabras presentes en comentarios sarcasticos sin considerar stopwords")
+```
+
+
+
+## Analisís de datos sobre los comentarios padre (misma idea que con los comentarios sarcasticos)
+
+Convertiremos nuestro vector de mensajes de texto a uno que pueda ser leído por ``tm``, donde habrán tantos documentos como comentario padre. Luego, crearemos un Corpus o colección de documentos.
+
+```{r}
+docs <- VectorSource(sarcasmo[,c("parent_comment")])
+docs <- VCorpus(docs)
+inspect(docs)
+```
+
+## Pre-procesamiento de texto
+
+### Remover puntuación
+```{r}
+docs <- tm_map(docs, removePunctuation)
+```
+
+### Remover números
+```{r}
+docs <- tm_map(docs, removeNumbers)
+```
+
+### Convertir a minúscula
+```{r}
+docs <- tm_map(docs, content_transformer(tolower))
+```
+
+### Eliminar espacios en blanco innecesarios
+```{r}
+docs <- tm_map(docs, stripWhitespace)
+```
+
+### Reemplazar caracteres específicos
+```{r}
+docs <- tm_map(docs, content_transformer(gsub), pattern = "/", replacement = "")
+docs <- tm_map(docs, content_transformer(gsub), pattern = '[[:digit:]]+', replacement = "")  # elimina cualquier digito
+```
+
+### Eliminar tildes
+```{r}
+docs <- tm_map(docs, content_transformer(iconv), from="UTF-8",to="ASCII//TRANSLIT")
+```
+
+### Remover caracteres especiales no considerados por ```removePunctuation```
+```{r}
+removeSpecialChars <- function(x) gsub("[^a-zA-Z0-9 ]","",x)
+docs <- tm_map(docs, content_transformer(removeSpecialChars))
+```
+
+
+
+
+## Matriz Documento-término
+```{r}
+dtm <- DocumentTermMatrix(docs)
+inspect(dtm)
+```
+
+### Transformar la DocumentTermMatrix en una matriz "visualizable"
+```{r}
+dtm.matrix <- as.matrix(dtm) 
+```
+
+### Términos más frecuentes presentes en los comentarios padre
+```{r}
+freq <- colSums(dtm.matrix)
+word_freq <- data.frame(word = names(freq), freq = freq, row.names = NULL)
+word_freq <- word_freq[order(-word_freq$freq),]
+```
+
+### Graficar términos más frecuentes presentes en los comentarios padre
+```{r}
+ggplot(word_freq[1:20,], aes(x = reorder(word, freq), y = freq)) +
+          geom_bar(stat = "identity") + 
+          coord_flip()+
+          ggtitle(label = "Top-20 palabras presentes en comentarios padre")
+```
+
+
+
+### Remover stopwords:
+```{r}
+docs <- tm_map(docs, removeWords, stopwords("english"))
+```
+
+```{r}
+dtm.sw <- DocumentTermMatrix(docs)
+dtm.sw.matrix <- as.matrix(dtm.sw)
+freq.sw <- colSums(dtm.sw.matrix)
+word_freq.sw <- data.frame(word = names(freq.sw), freq = freq.sw, row.names = NULL)
+word_freq.sw <- word_freq.sw[order(-word_freq.sw$freq),]
+```
+
+### Volver a graficar términos más frecuentes presentes en los comentarios padre, esta vez sin considerar stopwords
+
+```{r}
+ggplot(word_freq.sw[1:20,], aes(x = reorder(word, freq), y = freq)) +
+          geom_bar(stat = "identity") + 
+          coord_flip()+
+          ggtitle(label = "Top-20 palabras presentes en comentarios padre sin considerar stopwords")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Subreddits más recurrentes en los comentarios sarcasticos del dataset
+
+
+Observando la columna "subreddit" es posible ver que ciertos tópicos se repiten, es por esto que una buena idea sería realizar una exploración de datos para cuantificar cuales subreddits son los más repetidos en el dataset. Es deci, cuantificar la cantidad de comentarios sarcasticos que tiene cada subreddit presente en el dataset, lo que es equivalente a encontrar los subreddits que son más propensos a tener comentarios sarcasticos.
+
+Convertiremos nuestro vector de subreddits a uno que pueda ser leído por ``tm``, donde habrán tantos documentos como subreddits hayan. Luego, crearemos un Corpus o colección de documentos.
+
+```{r}
+docs <- VectorSource(sarcasmo[,c("subreddit")])
+docs <- VCorpus(docs)
+inspect(docs)
+```
+
+
+
+## Matriz Documento-término
+
+```{r}
+dtm <- DocumentTermMatrix(docs)
+inspect(dtm)
+```
+
+### Transformar la DocumentTermMatrix en una matriz "visualizable"
+
+```{r}
+dtm.matrix <- as.matrix(dtm) 
+```
+
+### subreddits más presentes en el dataset
+```{r}
+freq <- colSums(dtm.matrix)
+word_freq <- data.frame(word = names(freq), freq = freq, row.names = NULL)
+word_freq <- word_freq[order(-word_freq$freq),]
+```
+
+### Graficar subreddits más frecuentes en los comentarios sarcasticos del dataset
+```{r}
+ggplot(word_freq[1:20,], aes(x = reorder(word, freq), y = freq)) +
+          geom_bar(stat = "identity") + 
+          coord_flip()+
+          ggtitle(label = "Top-20 subreddits presentes en el dataset")
+```
+
+
+Podemos notar que los tópicos de los subreddits con más interacciones de comentarios sarcasticos son bien variados, y que van desde temas serios como política o noticias hasta temas más ludicos como league of legends o deportes.
+
+Es por esto que una pregunta super valida en este contexto es si los subreddits con mas interacciones de comentarios sarcasticos son los mismos que tienen mayor score a nivel global en sus comentarios (la suma de los scores de sus comentarios sarcasticos)
+
+## Subreddits con el mejor score
+
+```{r}
+porTopico <- sarcasmo %>%  
+group_by(subreddit) %>% # Agrupar los subreddit                     
+summarise(total = sum(score)) %>% # ordenados de menor a mayor por el score de sus comentarios sarcasticos      
+arrange(-total) # Ordenarlos de mayor a menor
+porTopico = porTopico[0:20,] # 20 subreddits con más score en sus comentarios sarcasticos
+porTopico
+```
+### Graficar subreddits con el mejor score
+
+```{r}
+ggplot(data = porTopico, aes(x = reorder(subreddit, total), y=total)) + geom_bar(stat = "identity")+coord_flip()+
+          ggtitle(label = "Top-20 subreddits con el mejor score")
+```
+
+
+Notamos que si bien aparecen los mismos subreddits, el orden de aparición cambia, lo que quiere decir que no necesariamente los subreddit con mayor participación de comentarios sarcasticos son los que se llevan mejor score. Esto nos puede dar un indicio de que los comentarios sarcasticos gustan más o no dependiendo del contexto en que se encuentre o sobre el tema que traten.
+
+
+## Cantidad de carácteres por comentario sarcastico
+
+Otra exploración que podemos realizar y la cual posiblemente nos ayude a encontrar una relación entre si un comentario es sarcastico o no, es identificar la cantidad de caracteres que posee, o dicho de otra forma, encontrar el largo del comentario, además de también conocer estadísticas sobre el largo en palabras de los comentarios, tales como el promedio, desviación estándar, máximo y mínimo..
+
+```{r}
+Length_comment=str_length(sarcasmo$comment)
+hist(Length_comment,xlim=c(0,1000), breaks = 1000, main = "Cantidad de carácteres por comentario sarcastico")
+# Resumen de estadísticas del largo de los comentarios sarcasticos
+summary(Length_comment)
+```
+## Cantidad de carácteres por comentario padre
+
+```{r}
+Lenght_parent=str_length(sarcasmo$parent_comment)
+hist(Lenght_parent,xlim=c(0,1000), breaks = 1000, main = "Cantidad de carácteres por comentario padre")
+# Resumen de estadísticas del largo de los comentarios padre
+summary(Lenght_parent)
+```
+
+
+Realizando una compración entre los dos graficos es posible observar que los comentarios sarcasticos se encuentran en un rango entre 0 a 400 caracteres con un promedio de 56.69 caracteres. Por otro lado, los comentarios padres se encuentran en un rango entre 0 y un poco más de 1000 caracteres y con un promedio de 133.4 caractes, lo que nos dice en general que los comentarios padre son más largos que los comentarios sarcasticos.
+
+Sin embargo para ambos tipos de comentario, la mayor concentración de datos está entre los 0 a 200 caracteres.
+
+
+## Analisis de los comentarios sarcasticos a través de los años (2009-2016)
+
+```{r}
+# Obtener frecuencia de los años de los comentarios sarcasticos
+anhos=substr(sarcasmo$date,1,4)
+anhos=table(anhos)
+anhos=data.frame(anhos)
+```
+
+
+```{r}
+barplot(anhos$Freq, names.arg = anhos$anhos, main="Comentarios sarcasticos a través del tiempo")
+```
+
+
+Se puede observar que la cantidad de comentarios sarcasticos a través de los años ha tenido una evolución exponencial, lo cual hace mucho sentido por el hecho de que reddit es una plataforma social que ha ido creciendo con el tiempo, acumulando un monton de usuarios y recibiendo nuevos todos los días, llegando a contar con más de 52 millones de usuarios activos diarios a nivel mundial.
