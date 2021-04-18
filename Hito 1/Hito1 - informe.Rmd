@@ -76,6 +76,39 @@ inspect(docs)
 ### Pre-procesamiento de texto
 En un comienzo, el contenido de cada documento en nuestra colección contendrá mucha información que de momento no es relevante para nosotros. Por ejemplo, puntuaciones, números, palabras no relevantes, etc. Por ello, es necesario efectuar el pre-procesamiento y limpieza de los datos.
 
+Es importane chequear si es que existen valores nulos dentro del dataset antes de realizar la exploración sobre este.
+Para revisar la presencia de valores inexistentes en el dataset se utilizará la función is.na(), que retorna un valor de verdad dependiendo si el dato es NA o no. Realizaremos la operación suma sobre estos valores booleanos, si la suma resultante es 0 quiere decir que no se encontraron valores en el dataset en que is.na() retornará TRUE, lo que nos indicaría que no hay datos inexistentes en las columnas.
+
+```{r}
+# Suma de valores NA en todas las columnas del dataset
+sum(is.na(sarcasmo$comment))
+sum(is.na(sarcasmo$author))
+sum(is.na(sarcasmo$subreddit))
+sum(is.na(sarcasmo$score))
+sum(is.na(sarcasmo$ups))
+sum(is.na(sarcasmo$downs))
+sum(is.na(sarcasmo$date))
+sum(is.na(sarcasmo$created_utc))
+sum(is.na(sarcasmo$parent_comment))
+
+
+# Mostrar existencia de filas con valores NA (notar que no son los que tiene como mentario el string '0')
+sarcasmo[sarcasmo$comment == 0,]
+```
+
+Como se puede observar se encontró que existian valores vacíos para la columna de los comentarios sarcasticos. Sin embargo, estos valores estaban presentes en todas las instancias asociadas a los valores NA. Por lo cual, con el objetivo de purificar el dataset, se realizó una limpieza sobre este, eliminando las filas corruptas.
+
+```{r}
+sarcasmo=sarcasmo[is.na(sarcasmo$author)==FALSE,]
+head(sarcasmo)
+```
+
+La función ```summary``` aplica estadísticas a cada columna. En particular, indica el promedio, mediana, quantiles, calor máximo, mínimo, entre otros. 
+
+```{r}
+summary(sarcasmo)
+```
+
 #### Remover puntuación
 ```{r}
 docs <- tm_map(docs, removePunctuation)
@@ -276,6 +309,126 @@ ggplot(word_freq.sw[1:20,], aes(x = reorder(word, freq), y = freq)) +
           ggtitle(label = "Top-20 palabras presentes en comentarios padre sin considerar stopwords")
 ```
 
+## Analisis de los comentarios sarcasticos a través de los años (2009-2016)
+```{r}
+# Obtener frecuencia de los años de los comentarios sarcasticos
+anhos=substr(sarcasmo$date,1,4)
+anhos=table(anhos)
+anhos=data.frame(anhos)
+
+```
+
+
+```{r}
+barplot(anhos$Freq, names.arg = anhos$anhos, main="Comentarios sarcasticos a través del tiempo")
+
+```
+
+
+Se puede observar que la cantidad de comentarios sarcasticos a través de los años ha tenido una evolución exponencial, lo cual hace mucho sentido por el hecho de que reddit es una plataforma social que ha ido creciendo con el tiempo, acumulando un monton de usuarios y recibiendo nuevos todos los días, llegando a contar con más de 52 millones de usuarios activos diarios a nivel mundial.
+
+## Subreddits más recurrentes en los comentarios sarcasticos del dataset
+
+
+Observando la columna "subreddit" es posible ver que ciertos tópicos se repiten, es por esto que una buena idea sería realizar una exploración de datos para cuantificar cuales subreddits son los más repetidos en el dataset. Es deci, cuantificar la cantidad de comentarios sarcasticos que tiene cada subreddit presente en el dataset, lo que es equivalente a encontrar los subreddits que son más propensos a tener comentarios sarcasticos.
+
+Convertiremos nuestro vector de subreddits a uno que pueda ser leído por ``tm``, donde habrán tantos documentos como subreddits hayan. Luego, crearemos un Corpus o colección de documentos.
+
+```{r}
+docs <- VectorSource(sarcasmo[,c("subreddit")])
+docs <- VCorpus(docs)
+inspect(docs)
+```
+
+
+
+## Matriz Documento-término
+
+```{r}
+dtm <- DocumentTermMatrix(docs)
+inspect(dtm)
+```
+
+### Transformar la DocumentTermMatrix en una matriz "visualizable"
+
+```{r}
+dtm.matrix <- as.matrix(dtm) 
+```
+
+### subreddits más presentes en el dataset
+```{r}
+freq <- colSums(dtm.matrix)
+word_freq <- data.frame(word = names(freq), freq = freq, row.names = NULL)
+word_freq <- word_freq[order(-word_freq$freq),]
+```
+
+### Graficar subreddits más frecuentes en los comentarios sarcasticos del dataset
+```{r}
+ggplot(word_freq[1:20,], aes(x = reorder(word, freq), y = freq)) +
+          geom_bar(stat = "identity") + 
+          coord_flip()+
+          ggtitle(label = "Top-20 subreddits presentes en el dataset")
+```
+
+
+Podemos notar que los tópicos de los subreddits con más interacciones de comentarios sarcasticos son bien variados, y que van desde temas serios como política o noticias hasta temas más ludicos como league of legends o deportes.
+
+Es por esto que una pregunta super valida en este contexto es si los subreddits con mas interacciones de comentarios sarcasticos son los mismos que tienen mayor score a nivel global en sus comentarios (la suma de los scores de sus comentarios sarcasticos)
+
+## Subreddits con el mejor score
+
+```{r}
+
+
+porTopico <- sarcasmo %>%  
+group_by(subreddit) %>% # Agrupar los subreddit                     
+summarise(total = sum(score)) %>% # ordenados de menor a mayor por el score de sus comentarios sarcasticos      
+arrange(-total) # Ordenarlos de mayor a menor
+
+porTopico = porTopico[0:20,] # 20 subreddits con más score en sus comentarios sarcasticos
+porTopico
+
+```
+### Graficar subreddits con el mejor score
+
+```{r}
+
+
+ggplot(data = porTopico, aes(x = reorder(subreddit, total), y=total)) + geom_bar(stat = "identity")+coord_flip()+
+          ggtitle(label = "Top-20 subreddits con el mejor score")
+```
+
+
+Notamos que si bien aparecen los mismos subreddits, el orden de aparición cambia, lo que quiere decir que no necesariamente los subreddit con mayor participación de comentarios sarcasticos son los que se llevan mejor score. Esto nos puede dar un indicio de que los comentarios sarcasticos gustan más o no dependiendo del contexto en que se encuentre o sobre el tema que traten.
+
+
+## Cantidad de carácteres por comentario sarcastico
+
+Otra exploración que podemos realizar y la cual posiblemente nos ayude a encontrar una relación entre si un comentario es sarcastico o no, es identificar la cantidad de caracteres que posee, o dicho de otra forma, encontrar el largo del comentario, además de también conocer estadísticas sobre el largo en palabras de los comentarios, tales como el promedio, desviación estándar, máximo y mínimo..
+
+```{r}
+Length_comment=str_length(sarcasmo$comment)
+hist(Length_comment,xlim=c(0,1000), breaks = 1000, main = "Cantidad de carácteres por comentario sarcastico")
+
+
+# Resumen de estadísticas del largo de los comentarios sarcasticos
+summary(Length_comment)
+```
+## Cantidad de carácteres por comentario padre
+
+```{r}
+Lenght_parent=str_length(sarcasmo$parent_comment)
+hist(Lenght_parent,xlim=c(0,1000), breaks = 1000, main = "Cantidad de carácteres por comentario padre")
+
+# Resumen de estadísticas del largo de los comentarios padre
+summary(Lenght_parent)
+```
+
+
+Realizando una compración entre los dos graficos es posible observar que los comentarios sarcasticos se encuentran en un rango entre 0 a 400 caracteres con un promedio de 56.69 caracteres. Por otro lado, los comentarios padres se encuentran en un rango entre 0 y un poco más de 1000 caracteres y con un promedio de 133.4 caractes, lo que nos dice en general que los comentarios padre son más largos que los comentarios sarcasticos. Sin embargo para ambos tipos de comentario, la mayor concentración de datos está entre los 0 a 200 caracteres.
+
+
+## Conclusiones a partir de la exploración de Datos
 Como se puede notar, las palabras resultan bastante similares en frecuencia para ambos tipos de comentario. Esto nos da distintas posibilidades respecto a los comentarios sarcásticos, donde esto podría indicarnos que la mayoría de comentarios sarcásticos suelen mencionar las mismas palabras del comentario padre (Ya sea por énfasis, etc.) o también indicar que algunos comentarios sarcásticos son respuestas de otros comentarios sarcásticos, lo cuál podría dificultar el estudio de comentarios sarcásticos.
 
 A partir de esto se puede intentar buscar la correlación de la presencia de tales palabras en un comentario sarcástico, y ver si existe una doble correlación, es decir, que un comentario sarcástico implique la presencia de ciertas palabras, y que se tenga lo inverso, es decir, la presencia de esta palabra resulte indicativa de un comentario sarcástico. Se podría buscar la presencia de estas palabras en ambos tipos de comentarios y después intentar entrenar un clasificador para ver si en verdad puede predecir la naturaleza del comentario.

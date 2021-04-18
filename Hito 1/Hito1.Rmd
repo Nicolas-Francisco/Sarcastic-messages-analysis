@@ -90,7 +90,6 @@ inspect(docs)
 ```
 
 
-
 ## Pre-procesamiento de texto
 En un comienzo, el contenido de cada documento en nuestra colección contendrá mucha información que de momento no es relevante para nosotros. Por ejemplo, puntuaciones, números, palabras no relevantes, etc. Por ello, es necesario efectuar el pre-procesamiento y limpieza de los datos.
 
@@ -308,20 +307,24 @@ ggplot(word_freq.sw[1:20,], aes(x = reorder(word, freq), y = freq)) +
 ```
 
 
+## Analisis de los comentarios sarcasticos a través de los años (2009-2016)
+
+```{r}
+# Obtener frecuencia de los años de los comentarios sarcasticos
+anhos=substr(sarcasmo$date,1,4)
+anhos=table(anhos)
+anhos=data.frame(anhos)
+
+```
 
 
+```{r}
+barplot(anhos$Freq, names.arg = anhos$anhos, main="Comentarios sarcasticos a través del tiempo")
+
+```
 
 
-
-
-
-
-
-
-
-
-
-
+Se puede observar que la cantidad de comentarios sarcasticos a través de los años ha tenido una evolución exponencial, lo cual hace mucho sentido por el hecho de que reddit es una plataforma social que ha ido creciendo con el tiempo, acumulando un monton de usuarios y recibiendo nuevos todos los días, llegando a contar con más de 52 millones de usuarios activos diarios a nivel mundial.
 
 
 
@@ -426,23 +429,3 @@ summary(Lenght_parent)
 Realizando una compración entre los dos graficos es posible observar que los comentarios sarcasticos se encuentran en un rango entre 0 a 400 caracteres con un promedio de 56.69 caracteres. Por otro lado, los comentarios padres se encuentran en un rango entre 0 y un poco más de 1000 caracteres y con un promedio de 133.4 caractes, lo que nos dice en general que los comentarios padre son más largos que los comentarios sarcasticos.
 
 Sin embargo para ambos tipos de comentario, la mayor concentración de datos está entre los 0 a 200 caracteres.
-
-
-## Analisis de los comentarios sarcasticos a través de los años (2009-2016)
-
-```{r}
-# Obtener frecuencia de los años de los comentarios sarcasticos
-anhos=substr(sarcasmo$date,1,4)
-anhos=table(anhos)
-anhos=data.frame(anhos)
-
-```
-
-
-```{r}
-barplot(anhos$Freq, names.arg = anhos$anhos, main="Comentarios sarcasticos a través del tiempo")
-
-```
-
-
-Se puede observar que la cantidad de comentarios sarcasticos a través de los años ha tenido una evolución exponencial, lo cual hace mucho sentido por el hecho de que reddit es una plataforma social que ha ido creciendo con el tiempo, acumulando un monton de usuarios y recibiendo nuevos todos los días, llegando a contar con más de 52 millones de usuarios activos diarios a nivel mundial.
