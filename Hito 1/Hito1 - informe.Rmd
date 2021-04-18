@@ -1,0 +1,294 @@
+---
+html_document: null
+subtitle: 'Integrantes: Nicolás García - Javier Lavados - José Triviño - Pablo Gutierrez
+  - Sebastián Salinas'
+title: "Análisis de mensajes Sarcásticos"
+df_print: paged
+---
+
+# Introducción
+El sarcasmo es una forma de comunicación mediante la cual las personas expresan información que debe ser interpretada con el sentido contrario a su significado literal, usualmente con un fin humorístico o de burla. El sarcasmo es principalmente distinguido a través del tono de voz empleado, y depende en gran parte del contexto en el cual se utiliza. La identificación del sarcasmo en datos de texto es uno de los grandes desafíos en el procesamiento de lenguajes naturales (PLN), el cual se ocupa de la formulación e investigación de mecanismos eficaces computacionalmente para la comunicación entre personas y máquinas por medio del lenguaje natural, en contraposición a los lenguajes de programación.
+
+Reddit es una red social en la cual los usuarios pueden participar subiendo texto, imágenes, videos o enlaces a distintas comunidades organizadas por tema, también conocidas como “subreddits”, que cubren una gran variedad de tópicos como noticias, política, ciencia, películas y videojuegos específicos, etc. Cada post cuenta con su propia sección de comentarios, donde los usuarios pueden opinar sobre el post en cuestión.
+
+Una convención frecuentemente utilizada en esta red social consiste en escribir “/s” al final de un comentario si este debe ser interpretado de forma sarcástica, lo cual sirve para remover cualquier ambigüedad acerca de la naturaleza de este, efectivamente implicando que el usuario desea transmitir el sentimiento opuesto a lo comentado.
+
+El propósito de este estudio consiste en analizar el contenido de un dataset de comentarios sarcásticos de Reddit, utilizando una base de datos con 1.3 millones de comentarios marcados con la etiqueta “/s”, cada uno con el comentario padre correspondiente, contando además con el subreddit del cual fueron extraídos, otorgando así un mayor contexto acerca del tema que está siendo abordado en la conversación.
+
+# Motivación
+El procesamiento de lenguajes naturales (abreviado PLN) es un campo de las ciencias de la computación, de la inteligencia artificial y de la lingüística que estudia las interacciones entre las computadoras y el lenguaje humano. Se ocupa de la formulación e investigación de mecanismos eficaces computacionalmente para la comunicación entre personas y máquinas por medio del lenguaje natural. Una de las principales dificultades en esta disciplina es la inherente ambigüedad presente en las lenguas naturales, tanto a nivel léxico (una palabra puede tener varios significados distintos) o estructural (construcción de árboles sintácticos). En el nivel pragmático, una oración puede no necesariamente significar lo que realmente se está diciendo, y elementos como el sarcasmo pueden alterar completamente el significado de una oración. 
+
+El sarcasmo como elemento es transmitido principalmente a través del tono de voz empleado, por lo que expresarlo mediante texto puede resultar complicado para los humanos, y aún más complicado puede ser interpretarlo para una máquina.
+
+# Exploración 
+El análisis se llevará a cabo con el objetivo de conseguir información importante sobre las conductas de la gente a la hora de escribir sarcasmo. Ejemplos de interrogantes pueden ser:
+- ¿Podemos filtrar varios subreddits, cuales usan más sarcasmo relativo al número de suscriptores o de comentarios totales?
+- Determinar las palabras más usadas en un comentario sarcástico. (Comparar con base de datos de frecuencia de palabras en inglés)
+- Determinar la relevancia de la puntuación y el uso de mayúsculas al caracterizar un comentario sarcástico.
+
+Lo primero es hacer una revisión inicial del dataset para comprender cómo están estructurados los datos. Esto significa, entender cuantos datos son, cuantas columnas, qué describe cada columna, el tipo de datos de las columnas, entre otras cosas:
+
+### Importación del dataset descargado localmente
+```{r, message=F}
+library(tidyverse)
+sarcasmo <- read_csv("../../train-balanced-sarcasm.csv")
+```
+
+### Atributos del dataset
+Con la función ```head``` podemos hacernos una idea de cómo son los datos, nos muestra los primeros 5 o 6 datos del dataset con los encabezados de cada atributo. Esto es útil para ver si los datos quedaron bien cargados o no.
+```{r}
+head(sarcasmo)
+```
+
+### Dimensiones del dataset
+```{r}
+dim(sarcasmo)
+```
+La función ```summary``` aplica estadísticas a cada columna. En particular, indica el promedio, mediana, quantiles, calor máximo, mínimo, entre otros. 
+```{r}
+summary(sarcasmo)
+```
+
+## Exploración de datos sobre los comentarios sarcasticos
+Primero se realizó un análisis de las palabras más frecuentes, tanto para los comentarios sarcásticos como para los comentarios padre, los cuales no contienen la etiqueta “/s”. Un buen punto de partida sería averiguar cuales son las palabras más recurrentes en los comentarios sarcasticos presentes en este dataset. Para ello, haremos una limpieza sobre estos.
+
+Si bien entendemos que los tipos de puntuación utilizados, la diferenciación entre mayúsculas y minúsculas, entre otros elementos que se usan para enriquecer los mensajes escritos son clave a la hora de transmitir el sarcasmo, de momento solo nos interesa la frecuencia de las palabras en si y no otras caracteristicas como por ejemplo el como están escritas.
+
+Dicho esto, la forma más tradicional de representar texto es considerar cada caracter de cada comentario y agregarlo como una columna al dataset. Ya que como se dijo la idea principal es considerar, por ejemplo, si aparece o no una palabra en cierto comentario o cuántas veces aparece en él. Por lo tanto, podríamos tener tantas columnas como elementos tengamos en la colección completa.
+
+Para lograr esto, utilizaremos la librería ``tm`` la cual permite realizar _text mining_ en R:
+```{r, message=F}
+library(tm)
+```
+
+Convertiremos nuestro vector de comentarios sarcasticos a uno que pueda ser leído por ``tm``, donde habrán tantos documentos como comentarios. Luego, crearemos un Corpus o colección de documentos.
+```{r}
+docs <- VectorSource(sarcasmo[,c("comment")])
+docs <- VCorpus(docs)
+```
+
+Al ejecutar la siguiente instrucción, veremos resumidamente cómo está compuesto el Corpus o colección de documentos
+```{r, eval=F}
+inspect(docs)
+```
+
+
+### Pre-procesamiento de texto
+En un comienzo, el contenido de cada documento en nuestra colección contendrá mucha información que de momento no es relevante para nosotros. Por ejemplo, puntuaciones, números, palabras no relevantes, etc. Por ello, es necesario efectuar el pre-procesamiento y limpieza de los datos.
+
+#### Remover puntuación
+```{r}
+docs <- tm_map(docs, removePunctuation)
+```
+
+#### Remover números
+```{r}
+docs <- tm_map(docs, removeNumbers)
+```
+
+#### Convertir a minúscula
+```{r}
+docs <- tm_map(docs, content_transformer(tolower))
+```
+
+#### Eliminar espacios en blanco innecesarios
+```{r}
+docs <- tm_map(docs, stripWhitespace)
+```
+
+#### Reemplazar caracteres específicos
+```{r}
+docs <- tm_map(docs, content_transformer(gsub), pattern = "/", replacement = "")
+docs <- tm_map(docs, content_transformer(gsub), pattern = '[[:digit:]]+', replacement = "")  # elimina cualquier digito
+```
+
+#### Eliminar tildes (A pesar que los comentarios están en ingles, nunca está de más prevenir)
+```{r}
+docs <- tm_map(docs, content_transformer(iconv), from="UTF-8",to="ASCII//TRANSLIT")
+```
+
+#### Remover caracteres especiales no considerados por ```removePunctuation```
+```{r}
+removeSpecialChars <- function(x) gsub("[^a-zA-Z0-9 ]","",x)
+docs <- tm_map(docs, content_transformer(removeSpecialChars))
+```
+
+### Matriz Documento-término
+
+Dado que necesitamos representar los datos de alguna manera, una forma tradicional de hacerlo es mediante una matriz. La idea principal es considerar cada documento como una fila, la cual a su vez tiene tantas columnas como términos existan en el corpus completo de documento (no por documento). De esta forma, podríamos conocer cuáles términos se repiten entre documentos (por ejemplo).
+
+Para esto, usaremos la función ``DocumentTermMatrix``, que utilizará nuestra colección completa de documentos:
+```{r}
+dtm <- DocumentTermMatrix(docs)
+inspect(dtm)
+```
+
+### Transformar la DocumentTermMatrix en una matriz "visualizable"
+
+Dado que la función ``DocumentTermMatrix`` agrega más información aparte de solo la matriz (metadata), muchas veces nos gustaría visualizar la matriz de forma más sencilla. Para ello, transformaremos el contenido a una matriz:
+
+```{r}
+dtm.matrix <- as.matrix(dtm) 
+```
+
+### Términos más frecuentes presentes en los comentarios sacasticos
+
+Creamos un dataframe donde tendremos 2 columnas: una para el término y otra para la cantidad de veces que aparece en la colección completa:
+```{r}
+freq <- colSums(dtm.matrix)
+word_freq <- data.frame(word = names(freq), freq = freq, row.names = NULL)
+word_freq <- word_freq[order(-word_freq$freq),]
+```
+
+### Graficar términos más frecuentes presentes en los comentarios sacasticos
+Importamos la librería ggplot2 para graficar en R:
+```{r}
+library(ggplot2)
+```
+
+Luego procedemos a graficar nuestro primer análisis, Las palabras más frecuentes:
+```{r}
+ggplot(word_freq[1:20,], aes(x = reorder(word, freq), y = freq)) +
+          geom_bar(stat = "identity") + 
+          coord_flip()+
+          ggtitle(label = "Top-20 palabras presentes en comentarios sarcasticos")
+```
+
+Como es posible apreciar, la mayor de estas palabras son aquellas que no entregan mayor significado a los documentos. Por ejemplo, artículos o preposiciones en su mayoría. Para solucionar este problema, podemos considerar una bolsa de palabras comunes llamada ``stopwords``. Por lo tanto y sobre el corpus original de documentos, eliminaremos palabras comunes para luego calcular la matriz nuevamente.
+
+#### Removeremos las stopwords:
+```{r}
+docs <- tm_map(docs, removeWords, stopwords("english"))
+```
+
+```{r}
+dtm.sw <- DocumentTermMatrix(docs)
+dtm.sw.matrix <- as.matrix(dtm.sw)
+freq.sw <- colSums(dtm.sw.matrix)
+word_freq.sw <- data.frame(word = names(freq.sw), freq = freq.sw, row.names = NULL)
+word_freq.sw <- word_freq.sw[order(-word_freq.sw$freq),]
+```
+
+#### Volver a graficar términos más frecuentes presentes en los comentarios sarcasticos, esta vez sin considerar stopwords
+
+```{r}
+ggplot(word_freq.sw[1:20,], aes(x = reorder(word, freq), y = freq)) +
+          geom_bar(stat = "identity") + 
+          coord_flip()+
+          ggtitle(label = "Top-20 palabras presentes en comentarios sarcasticos sin considerar stopwords")
+```
+
+
+
+## Exploración de datos sobre los comentarios padre (misma idea que con los comentarios sarcasticos)
+
+Convertiremos nuestro vector de mensajes de texto a uno que pueda ser leído por ``tm``, donde habrán tantos documentos como comentario padre. Luego, crearemos un Corpus o colección de documentos:
+```{r}
+docs <- VectorSource(sarcasmo[,c("parent_comment")])
+docs <- VCorpus(docs)
+inspect(docs)
+```
+
+### Pre-procesamiento de texto
+
+#### Remover puntuación
+```{r}
+docs <- tm_map(docs, removePunctuation)
+```
+
+####  Remover números
+```{r}
+docs <- tm_map(docs, removeNumbers)
+```
+
+#### Convertir a minúscula
+```{r}
+docs <- tm_map(docs, content_transformer(tolower))
+```
+
+#### Eliminar espacios en blanco innecesarios
+```{r}
+docs <- tm_map(docs, stripWhitespace)
+```
+
+#### Reemplazar caracteres específicos
+```{r}
+docs <- tm_map(docs, content_transformer(gsub), pattern = "/", replacement = "")
+docs <- tm_map(docs, content_transformer(gsub), pattern = '[[:digit:]]+', replacement = "")  # elimina cualquier digito
+```
+
+#### Eliminar tildes
+```{r}
+docs <- tm_map(docs, content_transformer(iconv), from="UTF-8",to="ASCII//TRANSLIT")
+```
+
+#### Remover caracteres especiales no considerados por ```removePunctuation```
+```{r}
+removeSpecialChars <- function(x) gsub("[^a-zA-Z0-9 ]","",x)
+docs <- tm_map(docs, content_transformer(removeSpecialChars))
+```
+
+### Matriz Documento-término
+```{r}
+dtm <- DocumentTermMatrix(docs)
+inspect(dtm)
+```
+
+#### Transformar la DocumentTermMatrix en una matriz "visualizable"
+```{r}
+dtm.matrix <- as.matrix(dtm) 
+```
+
+#### Términos más frecuentes presentes en los comentarios padre
+```{r}
+freq <- colSums(dtm.matrix)
+word_freq <- data.frame(word = names(freq), freq = freq, row.names = NULL)
+word_freq <- word_freq[order(-word_freq$freq),]
+```
+
+## Graficamos términos más frecuentes presentes en los comentarios padre
+```{r}
+ggplot(word_freq[1:20,], aes(x = reorder(word, freq), y = freq)) +
+          geom_bar(stat = "identity") + 
+          coord_flip()+
+          ggtitle(label = "Top-20 palabras presentes en comentarios padre")
+```
+
+#### Remover stopwords:
+```{r}
+docs <- tm_map(docs, removeWords, stopwords("english"))
+```
+
+```{r}
+dtm.sw <- DocumentTermMatrix(docs)
+dtm.sw.matrix <- as.matrix(dtm.sw)
+freq.sw <- colSums(dtm.sw.matrix)
+word_freq.sw <- data.frame(word = names(freq.sw), freq = freq.sw, row.names = NULL)
+word_freq.sw <- word_freq.sw[order(-word_freq.sw$freq),]
+```
+
+## Volver a graficar términos más frecuentes presentes en los comentarios padre, esta vez sin considerar stopwords
+
+```{r}
+ggplot(word_freq.sw[1:20,], aes(x = reorder(word, freq), y = freq)) +
+          geom_bar(stat = "identity") + 
+          coord_flip()+
+          ggtitle(label = "Top-20 palabras presentes en comentarios padre sin considerar stopwords")
+```
+
+Como se puede notar, las palabras resultan bastante similares en frecuencia para ambos tipos de comentario. Esto nos da distintas posibilidades respecto a los comentarios sarcásticos, donde esto podría indicarnos que la mayoría de comentarios sarcásticos suelen mencionar las mismas palabras del comentario padre (Ya sea por énfasis, etc.) o también indicar que algunos comentarios sarcásticos son respuestas de otros comentarios sarcásticos, lo cuál podría dificultar el estudio de comentarios sarcásticos.
+
+A partir de esto se puede intentar buscar la correlación de la presencia de tales palabras en un comentario sarcástico, y ver si existe una doble correlación, es decir, que un comentario sarcástico implique la presencia de ciertas palabras, y que se tenga lo inverso, es decir, la presencia de esta palabra resulte indicativa de un comentario sarcástico. Se podría buscar la presencia de estas palabras en ambos tipos de comentarios y después intentar entrenar un clasificador para ver si en verdad puede predecir la naturaleza del comentario.
+
+Otro análisis que se llevó a cabo fue el del uso de la puntuación y las mayúsculas. Pese a que se eliminaron puntuaciones, letras mayúsculas, y otros strings que entorpezcan el estudio de datos, notamos que gran parte de los comentarios del dataset utilizan muy frecuentemente estos strings con el fin de "exagerar" o "enfatizar" el sarcasmo de los comentarios estudiados. Es necesario realizar un estudio más exaustivo de estos tipos de mensajes, y ver si existe una relación entre cantidad de mayúsculas y otras puntuaciones dentro de un mensaje con sarcásmo.
+
+
+# Preguntas y problemas
+
+A partir de los datos estudiados se podrían responder interrogantes más complejas como:
+
+- ¿Se puede predecir un comentario sarcástico sin un indicio explícito de la naturaleza de este comentario (sin la existecia del tag “/s”)?
+- ¿Existen ciertas características comunes compartidas entre comentarios redactados de forma sarcástica?
+- ¿Qué tan necesario es conocer el contexto de un comentario para asumir que este es sarcástico?
+- ¿Se puede obtener de forma aislada o es necesario conocer el comentario al que se respondía?
+- Cantidad de sarcasmo proporcional a los usuarios según subreddit (cuales subreddits dan lugar a discusiones más tóxicas?)

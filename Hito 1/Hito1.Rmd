@@ -42,6 +42,7 @@ sum(is.na(sarcasmo$date))
 sum(is.na(sarcasmo$created_utc))
 sum(is.na(sarcasmo$parent_comment))
 
+
 # Mostrar existencia de filas con valores NA (notar que no son los que tiene como mentario el string '0')
 sarcasmo[sarcasmo$comment == 0,]
 ```
@@ -376,6 +377,7 @@ Es por esto que una pregunta super valida en este contexto es si los subreddits 
 
 ```{r}
 
+
 porTopico <- sarcasmo %>%  
 group_by(subreddit) %>% # Agrupar los subreddit                     
 summarise(total = sum(score)) %>% # ordenados de menor a mayor por el score de sus comentarios sarcasticos      
@@ -388,6 +390,7 @@ porTopico
 ### Graficar subreddits con el mejor score
 
 ```{r}
+
 
 ggplot(data = porTopico, aes(x = reorder(subreddit, total), y=total)) + geom_bar(stat = "identity")+coord_flip()+
           ggtitle(label = "Top-20 subreddits con el mejor score")
@@ -404,6 +407,7 @@ Otra exploración que podemos realizar y la cual posiblemente nos ayude a encont
 ```{r}
 Length_comment=str_length(sarcasmo$comment)
 hist(Length_comment,xlim=c(0,1000), breaks = 1000, main = "Cantidad de carácteres por comentario sarcastico")
+
 
 # Resumen de estadísticas del largo de los comentarios sarcasticos
 summary(Length_comment)
