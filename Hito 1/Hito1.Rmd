@@ -31,7 +31,7 @@ Es importane chequear si es que existen valores nulos dentro del dataset antes d
 Para revisar la presencia de valores inexistentes en el dataset se utilizará la función is.na(), que retorna un valor de verdad dependiendo si el dato es NA o no. Realizaremos la operación suma sobre estos valores booleanos, si la suma resultante es 0 quiere decir que no se encontraron valores en el dataset en que is.na() retornará TRUE, lo que nos indicaría que no hay datos inexistentes en las columnas.
 
 ```{r}
-# Suma de valores NA en la columna de los comentarios sarcastivos
+# Suma de valores NA en todas las columnas del dataset
 sum(is.na(sarcasmo$comment))
 sum(is.na(sarcasmo$author))
 sum(is.na(sarcasmo$subreddit))
@@ -42,16 +42,14 @@ sum(is.na(sarcasmo$date))
 sum(is.na(sarcasmo$created_utc))
 sum(is.na(sarcasmo$parent_comment))
 
-# Mostrar filas del dataset donde existen estos valores NA 
-sarcasmo[is.na(sarcasmo$comment)==TRUE,]
+# Mostrar existencia de filas con valores NA (notar que no son los que tiene como mentario el string '0')
 sarcasmo[sarcasmo$comment == 0,]
-sarcasmo[length(sarcasmo$comment) == 0,]
 ```
 
 Como se puede observar se encontró que existian valores vacíos para la columna de los comentarios sarcasticos. Sin embargo, estos valores estaban presentes en todas las instancias asociadas a los valores NA. Por lo cual, con el objetivo de purificar el dataset, se realizó una limpieza sobre este, eliminando las filas corruptas.
 
 ```{r}
-sarcasmo=sarcasmo[is.na(sarcasmo$comment)==FALSE,]
+sarcasmo=sarcasmo[is.na(sarcasmo$author)==FALSE,]
 head(sarcasmo)
 ```
 
@@ -370,7 +368,6 @@ ggplot(word_freq[1:20,], aes(x = reorder(word, freq), y = freq)) +
 ```
 
 
-
 Podemos notar que los tópicos de los subreddits con más interacciones de comentarios sarcasticos son bien variados, y que van desde temas serios como política o noticias hasta temas más ludicos como league of legends o deportes.
 
 Es por esto que una pregunta super valida en este contexto es si los subreddits con mas interacciones de comentarios sarcasticos son los mismos que tienen mayor score a nivel global en sus comentarios (la suma de los scores de sus comentarios sarcasticos)
@@ -395,8 +392,6 @@ porTopico
 ggplot(data = porTopico, aes(x = reorder(subreddit, total), y=total)) + geom_bar(stat = "identity")+coord_flip()+
           ggtitle(label = "Top-20 subreddits con el mejor score")
 ```
-
-
 
 
 Notamos que si bien aparecen los mismos subreddits, el orden de aparición cambia, lo que quiere decir que no necesariamente los subreddit con mayor participación de comentarios sarcasticos son los que se llevan mejor score. Esto nos puede dar un indicio de que los comentarios sarcasticos gustan más o no dependiendo del contexto en que se encuentre o sobre el tema que traten.
@@ -424,8 +419,6 @@ summary(Lenght_parent)
 ```
 
 
-
-
 Realizando una compración entre los dos graficos es posible observar que los comentarios sarcasticos se encuentran en un rango entre 0 a 400 caracteres con un promedio de 56.69 caracteres. Por otro lado, los comentarios padres se encuentran en un rango entre 0 y un poco más de 1000 caracteres y con un promedio de 133.4 caractes, lo que nos dice en general que los comentarios padre son más largos que los comentarios sarcasticos.
 
 Sin embargo para ambos tipos de comentario, la mayor concentración de datos está entre los 0 a 200 caracteres.
@@ -446,7 +439,6 @@ anhos=data.frame(anhos)
 barplot(anhos$Freq, names.arg = anhos$anhos, main="Comentarios sarcasticos a través del tiempo")
 
 ```
-
 
 
 Se puede observar que la cantidad de comentarios sarcasticos a través de los años ha tenido una evolución exponencial, lo cual hace mucho sentido por el hecho de que reddit es una plataforma social que ha ido creciendo con el tiempo, acumulando un monton de usuarios y recibiendo nuevos todos los días, llegando a contar con más de 52 millones de usuarios activos diarios a nivel mundial.
