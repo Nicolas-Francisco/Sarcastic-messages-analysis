@@ -13,7 +13,7 @@ Reddit es una red social en la cual los usuarios pueden participar subiendo text
 
 Una convención frecuentemente utilizada en esta red social consiste en escribir “/s” al final de un comentario si este debe ser interpretado de forma sarcástica, lo cual sirve para remover cualquier ambigüedad acerca de la naturaleza de este, efectivamente implicando que el usuario desea transmitir el sentimiento opuesto a lo comentado.
 
-El propósito de este estudio consiste en analizar el contenido de un dataset de comentarios sarcásticos de Reddit, utilizando una base de datos con 1.3 millones de comentarios marcados con la etiqueta “/s”, cada uno con el comentario padre correspondiente, contando además con el subreddit del cual fueron extraídos, otorgando así un mayor contexto acerca del tema que está siendo abordado en la conversación.
+El propósito de este estudio consiste en analizar el contenido de un dataset de comentarios sarcásticos de Reddit ([link del dataset](https://www.kaggle.com/danofer/sarcasm)), utilizando una base de datos con 1.3 millones de comentarios marcados con la etiqueta “/s”, cada uno con el comentario padre correspondiente, contando además con el subreddit del cual fueron extraídos, otorgando así un mayor contexto acerca del tema que está siendo abordado en la conversación.
 
 # Motivación
 El procesamiento de lenguajes naturales (abreviado PLN) es un campo de las ciencias de la computación, de la inteligencia artificial y de la lingüística que estudia las interacciones entre las computadoras y el lenguaje humano. Se ocupa de la formulación e investigación de mecanismos eficaces computacionalmente para la comunicación entre personas y máquinas por medio del lenguaje natural. Una de las principales dificultades en esta disciplina es la inherente ambigüedad presente en las lenguas naturales, tanto a nivel léxico (una palabra puede tener varios significados distintos) o estructural (construcción de árboles sintácticos). En el nivel pragmático, una oración puede no necesariamente significar lo que realmente se está diciendo, y elementos como el sarcasmo pueden alterar completamente el significado de una oración. 
@@ -310,9 +310,10 @@ Otra conclusión que se puede hacer es sobre el uso de la puntuación y las may�
 
 
 ## Analisis de los comentarios sarcasticos a través de los años (2009-2016)
+Un analisís interesante del dataset es ver la cantidad de comentarios sarcasticos a través de los años en la red social Reddit.
+Claramente esto no refleja necesariamente un aumento en el uso del sarcasmo, ya que puede ser proporcional al aumento de usuarios con los años, lo cual es un fenómeno presente en todas las redes sociales y en el internet en general.
 
-### Breve intro a la exploracion de cantidad de comentarios a través de los años
-
+Para esto de la columna "date" tomaremos los caracteres del 1 al 4, los cuales indican el año en el que se publicó el comentario.
 ```{r}
 # Obtener frecuencia de los años de los comentarios sarcasticos
 anhos=substr(sarcasmo$date,1,4)
@@ -321,7 +322,7 @@ anhos=data.frame(anhos)
 
 ```
 
-
+A continuación presentamos un grafico de barras que ilustra la cantidad de comentarios a través de los años
 ```{r}
 barplot(anhos$Freq, names.arg = anhos$anhos, main="Comentarios sarcasticos a través del tiempo", xlab = "Años", ylab = "Frecuencia")
 
@@ -364,7 +365,7 @@ dtm.matrix <- as.matrix(dtm)
 freq <- colSums(dtm.matrix)
 subreddit_freq <- data.frame(subreddit = names(freq), freq = freq, row.names = NULL)
 subreddit_freq <- subreddit_freq[order(-subreddit_freq$freq),]
-subreddit_freq
+head(subreddit_freq)
 ```
 
 ### Graficar subreddits más frecuentes en los comentarios sarcasticos del dataset
@@ -389,7 +390,7 @@ summarise(total = sum(score)) %>% # ordenados de menor a mayor por el score de s
 arrange(-total) # Ordenarlos de mayor a menor
 
 porTopico = porTopico[0:20,] # 20 subreddits con más score en sus comentarios sarcasticos
-porTopico
+head(porTopico)
 
 ```
 ### Graficar subreddits con el mejor score
@@ -451,3 +452,22 @@ A partir de los datos estudiados se podrían responder interrogantes más comple
 - ¿Qué tan necesario es conocer el contexto de un comentario para asumir que este es sarcástico?
 - ¿Se puede obtener de forma aislada o es necesario conocer el comentario al que se respondía?
 - Cantidad de sarcasmo proporcional a los usuarios según subreddit (cuales subreddits dan lugar a discusiones más tóxicas?)
+
+
+# Referencias
+
+- [link del dataset](https://www.kaggle.com/danofer/sarcasm)
+
+- [link del video de presentación](https://www.youtube.com/watch?v=_NAQHGNojYg)
+
+# Contribución individual
+
+Nicolás García: Encargado del manejo del repositorio del equipo y parte de la exploración de datos (cantidad de comentarios sarcasticos en el tiempo.)
+
+Karen Lavados: Limpieza de datos y parte de la exploración de datos (palabras más frecuentes tanto en los comentarios sarcasticos como en los comentarios padre.)
+
+José Triviño: Redacción del la primera parte del informe (Introducción y motivación) y edición del video.
+
+Pablo Gutierrez: Redacción de la segunda parte del informe (Conclusiones de la exploración de datos y preguntas.)
+
+Sebastián Salinas: Parte de la exploración de datos (subreddits más recurrentes asociados a los comentarios sarcasticos, score asociado a los subreddits y largo tanto de los comentarios sarcasticos como comentarios padre.)
