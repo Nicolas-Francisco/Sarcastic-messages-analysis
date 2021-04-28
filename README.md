@@ -1,4 +1,11 @@
-# Sarcastic-messages-analysis
-## Data Mining Course project
-### Nicolás García - José Triviño - Javier Lavados - Pablo Gutierrez - Sebastián Salinas
-Data Mining course Project - Study and characterization of sarcasm in Reddit Messages
+# Sarcastic messages analysis - Data Mining Course project
+## Description
+
+This will be a project someday...
+
+## Authors
+- **Nicolás García Ríos** - [Nicolas-Francisco](https://github.com/Nicolas-Francisco)
+- **José Triviño Álvarez** - [Joxito](https://github.com/Joxito)
+- **Javier Lavados Jillbert** - [JavierLavados](https://github.com/JavierLavados)
+- **Pablo Gutierrez Idalgo** - [penguinhacker](https://github.com/penguinhacker)
+- **Sebastián Salinas Rodríguez** - [Salix07](https://github.com/Salix07)
