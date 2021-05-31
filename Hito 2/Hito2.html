@@ -14676,7 +14676,7 @@ summary(Lenght_parent)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Librerias principales para la exploración:</span>
@@ -14707,7 +14707,7 @@ summary(Lenght_parent)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">yes_or_no</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;DatosHito2.xlsx&quot;</span><span class="p">)</span>
@@ -14724,7 +14724,7 @@ summary(Lenght_parent)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[&nbsp;]:</div>
+    <div class="prompt output_prompt">Out[3]:</div>
 
 
 
@@ -14810,7 +14810,7 @@ summary(Lenght_parent)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">yes_or_no</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
@@ -14832,24 +14832,15 @@ summary(Lenght_parent)
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
 RangeIndex: 295218 entries, 0 to 295217
-Data columns (total 13 columns):
- #   Column       Non-Null Count   Dtype  
----  ------       --------------   -----  
- 0   comment      295218 non-null  object 
- 1   subreddit    295218 non-null  object 
- 2   score        295218 non-null  int64  
- 3   sarcasm      295218 non-null  object 
- 4   Llave        295218 non-null  object 
- 5   Unnamed: 5   1 non-null       object 
- 6   Unnamed: 6   10 non-null      object 
- 7   Unnamed: 7   15 non-null      float64
- 8   Unnamed: 8   10 non-null      float64
- 9   Unnamed: 9   0 non-null       float64
- 10  Unnamed: 10  2 non-null       object 
- 11  Unnamed: 11  3 non-null       float64
- 12  Unnamed: 12  2 non-null       float64
-dtypes: float64(5), int64(1), object(7)
-memory usage: 29.3+ MB
+Data columns (total 4 columns):
+ #   Column     Non-Null Count   Dtype 
+---  ------     --------------   ----- 
+ 0   comment    295218 non-null  object
+ 1   subreddit  295218 non-null  object
+ 2   score      295218 non-null  int64 
+ 3   sarcasm    295218 non-null  object
+dtypes: int64(1), object(3)
+memory usage: 9.0+ MB
 </pre>
 </div>
 </div>
@@ -14868,7 +14859,7 @@ memory usage: 29.3+ MB
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">yes_or_no</span><span class="p">[</span><span class="s2">&quot;subreddit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
@@ -14884,7 +14875,7 @@ memory usage: 29.3+ MB
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[&nbsp;]:</div>
+    <div class="prompt output_prompt">Out[5]:</div>
 
 
 
@@ -14914,7 +14905,7 @@ Name: subreddit, dtype: int64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">cantAskRedditYes</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">yes_or_no</span><span class="p">[(</span><span class="n">yes_or_no</span><span class="p">[</span><span class="s1">&#39;subreddit&#39;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;AskReddit&quot;</span><span class="p">)</span><span class="o">&amp;</span> <span class="p">(</span><span class="n">yes_or_no</span><span class="p">[</span><span class="s1">&#39;sarcasm&#39;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;yes&quot;</span><span class="p">)])</span>
@@ -15181,7 +15172,7 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">datosAskReddit</span><span class="o">=</span><span class="n">yes_or_no</span><span class="p">[</span><span class="n">yes_or_no</span><span class="p">[</span><span class="s1">&#39;subreddit&#39;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;AskReddit&quot;</span><span class="p">]</span>
@@ -15198,7 +15189,7 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[&nbsp;]:</div>
+    <div class="prompt output_prompt">Out[7]:</div>
 
 
 
@@ -15225,15 +15216,6 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
       <th>subreddit</th>
       <th>score</th>
       <th>sarcasm</th>
-      <th>Llave</th>
-      <th>Unnamed: 5</th>
-      <th>Unnamed: 6</th>
-      <th>Unnamed: 7</th>
-      <th>Unnamed: 8</th>
-      <th>Unnamed: 9</th>
-      <th>Unnamed: 10</th>
-      <th>Unnamed: 11</th>
-      <th>Unnamed: 12</th>
     </tr>
   </thead>
   <tbody>
@@ -15243,15 +15225,6 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
       <td>AskReddit</td>
       <td>0</td>
       <td>yes</td>
-      <td>AskReddityes</td>
-      <td></td>
-      <td>AskReddityes</td>
-      <td>65674.0</td>
-      <td>0.724415</td>
-      <td>NaN</td>
-      <td>sarcasm</td>
-      <td>170516.0</td>
-      <td>0.577594</td>
     </tr>
     <tr>
       <th>1</th>
@@ -15259,15 +15232,6 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
       <td>AskReddit</td>
       <td>1</td>
       <td>yes</td>
-      <td>AskReddityes</td>
-      <td>NaN</td>
-      <td>AskRedditno</td>
-      <td>24984.0</td>
-      <td>0.275585</td>
-      <td>NaN</td>
-      <td>nosarcasm</td>
-      <td>124702.0</td>
-      <td>0.422406</td>
     </tr>
     <tr>
       <th>2</th>
@@ -15275,15 +15239,6 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
       <td>AskReddit</td>
       <td>22</td>
       <td>yes</td>
-      <td>AskReddityes</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>90658.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>295218.0</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>3</th>
@@ -15291,15 +15246,6 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
       <td>AskReddit</td>
       <td>1</td>
       <td>yes</td>
-      <td>AskReddityes</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>4</th>
@@ -15307,15 +15253,6 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
       <td>AskReddit</td>
       <td>1</td>
       <td>yes</td>
-      <td>AskReddityes</td>
-      <td>NaN</td>
-      <td>funnyyes</td>
-      <td>17939.0</td>
-      <td>0.418149</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
   </tbody>
 </table>
@@ -15777,7 +15714,7 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">datosWorld</span><span class="o">=</span><span class="n">yes_or_no</span><span class="p">[</span><span class="n">yes_or_no</span><span class="p">[</span><span class="s1">&#39;subreddit&#39;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;worldnews&quot;</span><span class="p">]</span>
@@ -15794,7 +15731,7 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[&nbsp;]:</div>
+    <div class="prompt output_prompt">Out[8]:</div>
 
 
 
@@ -15821,15 +15758,6 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
       <th>subreddit</th>
       <th>score</th>
       <th>sarcasm</th>
-      <th>Llave</th>
-      <th>Unnamed: 5</th>
-      <th>Unnamed: 6</th>
-      <th>Unnamed: 7</th>
-      <th>Unnamed: 8</th>
-      <th>Unnamed: 9</th>
-      <th>Unnamed: 10</th>
-      <th>Unnamed: 11</th>
-      <th>Unnamed: 12</th>
     </tr>
   </thead>
   <tbody>
@@ -15839,15 +15767,6 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
       <td>worldnews</td>
       <td>1</td>
       <td>yes</td>
-      <td>worldnewsyes</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>144141</th>
@@ -15855,15 +15774,6 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
       <td>worldnews</td>
       <td>-1</td>
       <td>yes</td>
-      <td>worldnewsyes</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>144142</th>
@@ -15871,15 +15781,6 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
       <td>worldnews</td>
       <td>1</td>
       <td>yes</td>
-      <td>worldnewsyes</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>144143</th>
@@ -15887,15 +15788,6 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
       <td>worldnews</td>
       <td>2</td>
       <td>yes</td>
-      <td>worldnewsyes</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>144144</th>
@@ -15903,15 +15795,6 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
       <td>worldnews</td>
       <td>1</td>
       <td>yes</td>
-      <td>worldnewsyes</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
   </tbody>
 </table>
