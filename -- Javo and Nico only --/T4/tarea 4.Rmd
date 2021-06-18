@@ -41,15 +41,20 @@ inspect(head(Groceries))
 Nota: use `confidence=0.3`.
 
 ```{r}
-# RESPUESTA
+frecuentrules <- apriori(Groceries, parameter=list(support=0.04, confidence=0.3))
+frecuentrules.sorted <- sort(frecuentrules, by="count")
+frecuentrules.sorted.first5 <- head(frecuentrules.sorted, 5)
+inspect(frecuentrules.sorted.first5)
 
 ```
 
 **1.2** Usando el dataset `Groceries`, muestre 10 reglas de asociación que podrían generar una mayor venta en el supermercado. Emplee *Apriori* con `confidence=0.3` y que la regla aparezca en al menos un 1% del dataset. Fundamente su respuesta en base a los resultados y adjunte código. 
 
 ```{r}
-# RESPUESTA
-
+rules <- apriori(Groceries, parameter=list(support=0.01, confidence=0.3))
+rules.sorted <- sort(rules, by="lift")
+rules.sorted.first10 <- head(rules.sorted, 10)
+inspect(rules.sorted.first10)
 ```
 
 **1.3** El siguiente gráfico muestra las reglas obtenidas con Apriori con minSup=0.01 y minConf=0.3. Describa tres observaciones a partir del gráfico (por ejemplo: "la mayoría de las reglas tienen soporte menor a 0.02").
