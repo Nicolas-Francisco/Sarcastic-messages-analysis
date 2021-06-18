@@ -8,7 +8,7 @@ output:
     toc: yes
 ---
 
-Nombres: 
+Nombres: **Nicolás Garcia Ríos, Javier Lavados Jillbert** 
 
 # Instrucciones
 
@@ -64,15 +64,19 @@ Respuesta
 
 **2.1** ¿Qué significa que la regla `{chocolate, shopping bags} => {cake bar}`, tenga un `confidence` de $1$? Explique. 
 
-Respuesta
+**Respuesta:** El *confidence* mide la frecuencia con la que ocurre un itemset respecto a la frecuencia del itemset antecedente, esto es, 
+que representa la frecuencia con la que la regla aparece en el dataset respecto a la frecuencia con la que aparece la primera parte de la regla. Aplicando esta idea al ejemplo, tendremos que el *support count* de `{chocolate, shopping bags} U {cake bar}` (que representa la cantidad de veces que se cumple la regla), es exactamente igual a la frecuencia con la que aparece el itemset `{chocolate, shopping bags}`, indicando que la regla se cumple *siempre* (`confidence = 1`)
 
 **2.2** ¿Qué significa que la regla `{processed cheese, white bread} => {ham} ` tenga un lift de $17.8$? Explique. 
 
-Respuesta
+**Respuesta:** El *lift* es una medida que se basa en la indepenencia estadística de dos itemsets. Dado que la probabilidad conjunta de dos eventos independientes está dada por el producto de las dos probabilidades separadas, podemos medir que tan dependientes son dos itemsets al medir el producto de las probabilidades de ambos itemsets por separado. Ahora, dado que:
+$I( \left \{processed cheese, white bread \right \} , \left \{ ham \right \}) = N \frac{P(\left \{processed cheese, white bread \right \} \cap \left \{ ham \right \})}{P(\left \{processed cheese, white bread \right \}) P(\left \{ ham \right \})} > 1$
+
+Podemos asegurar que la correlación entre ambos datasets es positiva, y por ende no son independientes entre sí. 
 
 **2.3** Si tuviéramos la regla `{yogurt} => {coffee}`, y encontráramos que tiene `confidence` $1$ ¿Podríamos decir que este es un patrón relevante sobre los datos?
 
-Respuesta
+**Respuesta:** ¡No necesariamente!. Recordemos que el *confidence* mide únicamente la frecuencia con la que ocurre una regla, pero esta no nos indica si estos eventos son frecuentes por sí solos o no. La medida de *confidence* no nos será útil si tenemos atributos independientemente frecuentes, ya que esto puede afectar al entendimieno del modelo y llevarnos a resultados equivocados. Es por lo anterior que es necesaria la medida *lift*, para poder determinar si la confianza de la regla es por un efecto real de dependencia o no.
 
 
 ## Parte 3 : Aplicación práctica de las Reglas de Asociación
