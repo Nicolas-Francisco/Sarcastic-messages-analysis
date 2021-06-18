@@ -104,4 +104,21 @@ Ambas transacciones aparecen un mismo número de veces, es decir, `{audífonos, 
 
 Analice cuál de las 2 reglas es más útil para un negocio que quiere recomendar productos a sus clientes. ¿Qué puede decir sobre las medidas de interés de ambas reglas? Concluya viendo el `lift` de ambas reglas.
 
-Respuesta
+**Respuesta:** Calculemos primero las medidas de interés de ambas reglas:
+Teniendo que
+$$\sigma(X) = \text{# de veces que aparece }X \text{ en el dataset}$$
+$$\text{support}(X) = \frac{\sigma(X)}{N}$$
+
+$$\text{support}(X \rightarrow Y) = \frac{\sigma(X \cup Y)}{N}$$
+$$\text{confidence}(X \rightarrow Y) = \frac{\text{support}(X\rightarrow Y)}{\text{support}(X)} = \frac{\sigma(X \cup Y)}{\sigma(X)}$$
+$$\text{lift}(X\rightarrow Y) = \frac{\text{confidence}(X\rightarrow Y)}{\text{support}(Y)}$$
+
+Donde $N$ es la cantidad de transacciones (el tamaño del dataset), podemos calcular estas medidas para ambas reglas.
+
+La primera medida que calcularemos será el support, el cuál por la razón de los datos del dataset, naturalmente serán iguales:
+
+$$\text{support}(\text{audífonos} \rightarrow  \text{smartphone}) = \text{support}(\text{smartphone} \rightarrow  \text{audífonos}) = \frac{\sigma(\text{audífonos} \cup  \text{smartphone})}{N} = \frac{1}{2}$$
+Por otro lado, podemos calcular la confianza de ambas reglas.
+
+$$\text{confidence}(\text{audífonos} \rightarrow  \text{smartphone}) = \frac{\text{support}(\text{audífonos} \rightarrow  \text{smartphone})}{\text{support}(\text{audífonos})} = 1$$
+$$\text{confidence}(\text{smartphone} \rightarrow  \text{audífonos}) = \frac{\text{support}(\text{smartphone} \rightarrow  \text{audífonos})}{\text{support}(\text{smartphone})} = \frac{1}{2}$$

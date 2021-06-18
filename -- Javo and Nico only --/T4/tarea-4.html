@@ -349,7 +349,12 @@ inspect(rules.sorted.first10)</code></pre>
 <li><code>{smartphone} =&gt; {audífonos}</code></li>
 </ol>
 <p>Analice cuál de las 2 reglas es más útil para un negocio que quiere recomendar productos a sus clientes. ¿Qué puede decir sobre las medidas de interés de ambas reglas? Concluya viendo el <code>lift</code> de ambas reglas.</p>
-<p>Respuesta</p>
+<p><strong>Respuesta:</strong> Calculemos primero las medidas de interés de ambas reglas: Teniendo que <span class="math display">\[\sigma(X) = \text{# de veces que aparece }X \text{ en el dataset}\]</span> <span class="math display">\[\text{support}(X) = \frac{\sigma(X)}{N}\]</span></p>
+<p><span class="math display">\[\text{support}(X \rightarrow Y) = \frac{\sigma(X \cup Y)}{N}\]</span> <span class="math display">\[\text{confidence}(X \rightarrow Y) = \frac{\text{support}(X\rightarrow Y)}{\text{support}(X)} = \frac{\sigma(X \cup Y)}{\sigma(X)}\]</span> <span class="math display">\[\text{lift}(X\rightarrow Y) = \frac{\text{confidence}(X\rightarrow Y)}{\text{support}(Y)}\]</span></p>
+<p>Donde <span class="math inline">\(N\)</span> es la cantidad de transacciones (el tamaño del dataset), podemos calcular estas medidas para ambas reglas.</p>
+<p>La primera medida que calcularemos será el support, el cuál por la razón de los datos del dataset, naturalmente serán iguales:</p>
+<p><span class="math display">\[\text{support}(\text{audífonos} \rightarrow  \text{smartphone}) = \text{support}(\text{smartphone} \rightarrow  \text{audífonos}) = \frac{\sigma(\text{audífonos} \cup  \text{smartphone})}{N} = \frac{1}{2}\]</span> Por otro lado, podemos calcular la confianza de ambas reglas.</p>
+<p><span class="math display">\[\text{confidence}(\text{audífonos} \rightarrow  \text{smartphone}) = \frac{\text{support}(\text{audífonos} \rightarrow  \text{smartphone})}{\text{support}(\text{audífonos})} = 1\]</span> <span class="math display">\[\text{confidence}(\text{smartphone} \rightarrow  \text{audífonos}) = \frac{\text{support}(\text{smartphone} \rightarrow  \text{audífonos})}{\text{support}(\text{smartphone})} = \frac{1}{2}\]</span></p>
 </div>
 </div>
 
