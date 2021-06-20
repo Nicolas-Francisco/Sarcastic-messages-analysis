@@ -125,9 +125,10 @@ $$\text{confidence}(\text{audífonos} \rightarrow  \text{smartphone}) = \frac{\t
 $$\text{confidence}(\text{smartphone} \rightarrow  \text{audífonos}) = \frac{\text{support}(\text{smartphone} \rightarrow  \text{audífonos})}{\text{support}(\text{smartphone})} = \frac{1}{2}$$
 Lo anterior es obvio, dado que en el primer caso estamos midiendo la cantidad de veces que se cumple la regla `{audífonos, smartphone}` respecto a la cantidad de veces que aparece *audífonos*, y que por la geometría del dataset tendremos que se cumple *siempre*. Con solo estos valores podríamos concluir directamente que la regla es totalmente efectiva, y que lo matematicamente más correcto sería implementar la primera regla en este negocio, pero este no es nada más y nada menos que un ejemplo de las fallas de la medida de *confidence*.
 
-Si ahora calculamos los valores de *lift* por la primera regla, tendremos que:
+Si ahora calculamos los valores de *lift* para ambas reglas, tendremos que:
 
 $$\text{lift}(\text{audífonos} \rightarrow  \text{smartphone}) = \frac{\text{confidence}(\text{audífonos} \rightarrow  \text{smartphone})}{\text{support}(\text{smartphone})} = 1$$
 
+$$\text{lift}(\text{smartphone} \rightarrow  \text{audífonos}) = \frac{\text{confidence}(\text{smartphone} \rightarrow  \text{audífonos})}{\text{support}(\text{audífonos})} = 1$$
 
-Teniendo que en realidad ambos son estadísticamente independientes entre sí, y en realidad el atributo `audífonos` no aporta realmente información (redundancia). Luego podemos concluir que la regla más correcta es `{smartphone} => {audífonos}`, y sería la pormoción más lógica para este negocio.
+Teniendo que en realidad ambos son estadísticamente independientes entre sí, y en realidad el atributo `audífonos` no aporta realmente información (redundancia). Luego podemos concluir que ninguna de las dos reglas son completamente útiles.
