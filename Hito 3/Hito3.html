@@ -15106,7 +15106,7 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
 <ol>
 <li>¿Es posible predecir si un mensaje es sarcástico a partir de su contenido? ¿Cuál es la mejor forma de predecir esto?</li>
 <li>¿El patrón de sarcasmo es constante entre un dominio y otro? ¿Influye el tópico en discusión al momento de detectar el sarcasmo?</li>
-<li>¿Existe alguna otra característica a través de la cual se puedan clasificar los comentarios además del sarcasmo?</li>
+<li>¿Difieren de gran manera los patrones entre un dominio y otro?</li>
 </ol>
 
 </div>
@@ -15153,7 +15153,7 @@ Proporción comentarios no sarcasticos en el dataset:  0.42240649282902804
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Pregunta-3---&#191;Existe-alguna-otra-caracter&#237;stica-a-trav&#233;s-de-la-cual-se-puedan-clasificar-los-comentarios-adem&#225;s-del-sarcasmo?"><strong>Pregunta 3 -</strong> <em>&#191;Existe alguna otra caracter&#237;stica a trav&#233;s de la cual se puedan clasificar los comentarios adem&#225;s del sarcasmo?</em><a class="anchor-link" href="#Pregunta-3---&#191;Existe-alguna-otra-caracter&#237;stica-a-trav&#233;s-de-la-cual-se-puedan-clasificar-los-comentarios-adem&#225;s-del-sarcasmo?">&#182;</a></h2><p>A partir de los resultados de la pregunta anterior, se podría intentar visualizar de qué forma se distribuyen los comentarios a partir de sus características. Para subreddits donde la validación cruzada arroje un alto accuracy, se puede asumir que los patrones de sarcasmo serán similares, por lo que al hacer clustering para visualizar la distribución de estos se deberían tener pocos clusters. Por otra parte, para un par de subreddits con bajo accuracy al momento de realizar la validación cruzada, se deberían obtener muchos clusters disjuntos, ya que los patrones presentes en un subreddit no necesariamente coincidirán con los patrones presentes en el otro.</p>
+<h2 id="Pregunta-3---&#191;Difieren-de-gran-manera-los-patrones-entre-un-dominio-y-otro?"><strong>Pregunta 3 -</strong> <em>&#191;Difieren de gran manera los patrones entre un dominio y otro?</em><a class="anchor-link" href="#Pregunta-3---&#191;Difieren-de-gran-manera-los-patrones-entre-un-dominio-y-otro?">&#182;</a></h2><p>A partir de los resultados de la pregunta anterior, se podría intentar visualizar de qué forma se distribuyen los comentarios a partir de sus características. Para subreddits donde la validación cruzada arroje un alto accuracy, se puede asumir que los patrones de sarcasmo serán similares, por lo que al hacer clustering para visualizar la distribución de estos se deberían tener pocos clusters. Por otra parte, para un par de subreddits con bajo accuracy al momento de realizar la validación cruzada, se deberían obtener muchos clusters disjuntos, ya que los patrones presentes en un subreddit no necesariamente coincidirán con los patrones presentes en el otro.</p>
 <p>Dado esto, se propone resolver esta interrogante de la siguiente forma:</p>
 <ul>
 <li>Del experimento anterior, se buscarán los pares de subreddits que presenten el mejor y el peor desempeño en la validación cruzada.</li>
