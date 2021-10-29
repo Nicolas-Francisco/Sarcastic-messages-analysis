@@ -44,7 +44,7 @@ The main file ```Hito3.ipynb``` and its web page ```Hito3.html``` are contained 
 - **José Triviño Álvarez** - [Joxito](https://github.com/Joxito)
 - **Javier Lavados Jillbert** - [JavierLavados](https://github.com/JavierLavados)
 - **Pablo Gutierrez Idalgo** - [penguinhacker](https://github.com/penguinhacker)
-- **Sebastián Salinas Rodríguez** - [Salix07](https://github.com/salistito)
+- **Sebastián Salinas Rodríguez** - [salistito](https://github.com/salistito)
 
 Credits
 -------
